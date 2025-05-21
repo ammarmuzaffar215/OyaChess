@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import ProtectedRoute from './ProtectedRoute';
 import NoMatch from './NoMatch';
 
+import HomePage from '../components/HomePage/HomePage';
 import LoginPage from '../components/LoginPage/LoginPage';
 import SignUpPage from '../components/LoginPage/signUp/SignUpPage';
 import ResetPage from '../components/LoginPage/ResetPage';
@@ -115,7 +116,7 @@ import PuzzleProjectLayoutPage from "../components/app_components/PuzzlesPage/Pu
 const MyRouter = (props) => {
     return (
         <Routes>
-            <Route path="/" exact element={props.isLoggedIn ? <DashboardAdminControl /> : <LoginPage />} />
+            <Route path="/" exact element={<HomePage />} /> 
             <Route path="/login" exact element={props.isLoggedIn === true ? <DashboardAdminControl /> : <LoginPage />} />
             <Route path="/reset/:singleChangeForgotPasswordId" exact element={<ResetPage />} />
             <Route path="/signup" exact element={<SignUpPage />} />

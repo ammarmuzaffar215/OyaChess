@@ -1,5 +1,5 @@
 import React from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, matchPath } from "react-router-dom";
 import { Provider } from "react-redux";
 import MyRouter from "./MyRouter/MyRouter";
 import store from "./utils/store";
@@ -23,14 +23,24 @@ import "./css/customStyles.css";
 const App = () => {
   const location = useLocation();
 
-  const showSideMenuButton = false;
+  // List of routes that should NOT use AppTopbar or MainLayout
+  const noLayoutRoutes = ["/"];
+
+  const useLayout = !noLayoutRoutes.some((path) =>
+    matchPath({ path, end: true }, location.pathname)
+  );
 
   return (
     <Provider store={store}>
-      <AppTopbar showSideMenuButton={showSideMenuButton} />
-      <MainLayout>
+      {useLayout && <AppTopbar showSideMenuButton={false} />}
+
+      {useLayout ? (
+        <MainLayout>
+          <MyRouter />
+        </MainLayout>
+      ) : (
         <MyRouter />
-      </MainLayout>
+      )}
 
       <LoadingWrapper />
       <ToastWrapper />
