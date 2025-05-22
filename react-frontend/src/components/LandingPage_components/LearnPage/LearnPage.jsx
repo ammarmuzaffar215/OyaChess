@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import PublicNavbar from "../../Layouts/PublicNavbar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { Accordion, AccordionTab } from "primereact/accordion";
+import { Chessboard } from "react-chessboard";
+import Board1 from "./ChessFunction/Board1";
+import Board2 from "./ChessFunction/Board2";
 
-const HomePage = () => {
+const LearnPage = () => {
   const navigate = useNavigate();
+  const [highlight, setHighlight] = useState("");
 
   return (
     <>
@@ -34,7 +38,24 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Section: Chess Intro with Image */}
+      {/* Introduction */}
+      <div className="bg-white p-8">
+        <div className="flex items-center justify-center gap-2 w-full max-w-screen-xl mx-auto px-6 md:px-[30rem]">
+          <p className="m-0 font-marlin font-normal text-xl text-black">
+            In this page, I have listed all the important rules a chess player
+            must know to start playing. Enjoy learning!
+          </p>
+        </div>
+      </div>
+      <div className="bg-white py-4 px-8">
+        <div className="flex items-center justify-center gap-2 w-full max-w-screen-xl mx-auto px-6 md:px-[30rem]">
+          <p className="m-0 font-marlin font-bold text-4xl text-black">
+            Contents
+          </p>
+        </div>
+      </div>
+
+      {/* Chess Lesson*/}
       <div className="bg-white p-8">
         <div className="card">
           <Accordion multiple activeIndex={[0]}>
@@ -45,37 +66,122 @@ const HomePage = () => {
                 </span>
               }
             >
-              <p className="m-0">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor
-                in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-                nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-                sunt in culpa qui officia deserunt mollit anim id est laborum.
+              <p className="m-0 font-medium text-2xl">
+                How to start a chess game?
+                <div
+                  style={{
+                    borderTop: "2px solid #000000",
+                    margin: "0.5rem auto",
+                  }}
+                ></div>
+              </p>
+              <p className="m-0 text-xl">
+                To play chess, <strong>TWO</strong> players are needed. This is
+                because chess has two sides, White and Black.
+              </p>
+              <br />
+              <br />
+              <p className="m-0 font-medium text-2xl">
+                Who starts the game first?
+                <div
+                  style={{
+                    borderTop: "2px solid #000000",
+                    margin: "0.5rem auto",
+                  }}
+                ></div>
+              </p>
+              <p className="m-0 text-xl">
+                White will start first, and then followed by Black. The players
+                alternate move until the game ends.
               </p>
             </AccordionTab>
-            <AccordionTab header={
+
+            <AccordionTab
+              header={
                 <span className="text-2xl font-semibold">
                   Lesson 2: Chess Board
                 </span>
-              }>
-              <p className="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              }
+            >
+              <div className="flex flex-col md:flex-row justify-center items-start gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
+                {/* Board 1 */}
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+                  <Board1 />
+                  <ul className="list-disc mt-4 text-left w-[400px] max-w-md px-4">
+                    <li className="text-xl py-1">
+                      There are <strong>64 squares</strong> in total.
+                    </li>
+                    <li className="text-xl py-1">
+                      32 <strong>light squares</strong> and 32{" "}
+                      <strong>dark squares</strong>.
+                    </li>
+                    <li className="text-xl py-1">
+                      The 1–8 horizontal coordinates are called "
+                      <strong>rank</strong>".
+                    </li>
+                    <li className="text-xl py-1">
+                      The a–h vertical coordinates are called "
+                      <strong>file</strong>".
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Board 2 */}
+                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start mt-8 md:mt-0">
+                  <Board2 highlight={highlight} />
+                  <ul className="list-disc mt-4 text-left w-[400px] max-w-md px-4">
+                    <li className="text-xl py-1">
+                      The 1st to 4th rank is the{" "}
+                      <strong
+                        onClick={() => setHighlight("white")}
+                        className="cursor-pointer text-blue-700"
+                      >
+                        White side
+                      </strong>
+                      .
+                    </li>
+                    <li className="text-xl py-1">
+                      The 5th to 8th rank is the{" "}
+                      <strong
+                        onClick={() => setHighlight("black")}
+                        className="cursor-pointer text-blue-700"
+                      >
+                        Black side
+                      </strong>
+                      .
+                    </li>
+                    <li className="text-xl py-1">
+                      The a to d file is the{" "}
+                      <strong
+                        onClick={() => setHighlight("queen")}
+                        className="cursor-pointer text-blue-700"
+                      >
+                        Queen side
+                      </strong>
+                      .
+                    </li>
+                    <li className="text-xl py-1">
+                      The e to h file is the{" "}
+                      <strong
+                        onClick={() => setHighlight("king")}
+                        className="cursor-pointer text-blue-700"
+                      >
+                        King side
+                      </strong>
+                      .
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </AccordionTab>
-            <AccordionTab header={
+
+            <AccordionTab
+              header={
                 <span className="text-2xl font-semibold">
                   Lesson 3: Chess Pieces
                 </span>
-              }>
+              }
+            >
               <p className="m-0">
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem
                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
@@ -87,11 +193,13 @@ const HomePage = () => {
                 modi.
               </p>
             </AccordionTab>
-            <AccordionTab header={
+            <AccordionTab
+              header={
                 <span className="text-2xl font-semibold">
                   Lesson 4: Starting Setup
                 </span>
-              }>
+              }
+            >
               <p className="m-0">
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem
                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
@@ -103,11 +211,13 @@ const HomePage = () => {
                 modi.
               </p>
             </AccordionTab>
-            <AccordionTab header={
+            <AccordionTab
+              header={
                 <span className="text-2xl font-semibold">
                   Lesson 5: Piece Movement
                 </span>
-              }>
+              }
+            >
               <p className="m-0">
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem
                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
@@ -119,11 +229,13 @@ const HomePage = () => {
                 modi.
               </p>
             </AccordionTab>
-            <AccordionTab header={
+            <AccordionTab
+              header={
                 <span className="text-2xl font-semibold">
                   Lesson 6: Pieces Value
                 </span>
-              }>
+              }
+            >
               <p className="m-0">
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem
                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
@@ -135,11 +247,13 @@ const HomePage = () => {
                 modi.
               </p>
             </AccordionTab>
-            <AccordionTab header={
+            <AccordionTab
+              header={
                 <span className="text-2xl font-semibold">
                   Lesson 7: Check, Checkmate and Stalemate
                 </span>
-              }>
+              }
+            >
               <p className="m-0">
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem
                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
@@ -151,11 +265,13 @@ const HomePage = () => {
                 modi.
               </p>
             </AccordionTab>
-            <AccordionTab header={
+            <AccordionTab
+              header={
                 <span className="text-2xl font-semibold">
                   Lesson 8: Special Moves
                 </span>
-              }>
+              }
+            >
               <p className="m-0">
                 Sed ut perspiciatis unde omnis iste natus error sit voluptatem
                 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
@@ -174,7 +290,7 @@ const HomePage = () => {
       {/* Section: Closing intro */}
       <div className="bg-emerald-500 p-8">
         <div className="flex flex-col md:flex-row items-center justify-center gap-2 w-full max-w-screen-xl mx-auto px-6 md:px-[30rem]">
-          <p className="m-0 font-marlin font-normal text-xl text-black basis-full md:basis-full">
+          <p className="m-0 font-marlin font-normal text-xl text-black">
             But of course, first you need to know what chess looks like. It is
             not the same as checkers. Here I put a video example of a chess game
             played by two Chess Grandmasters: Magnus Carlsen VS Hikaru Nakamura
@@ -210,8 +326,8 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Section: Next */}
-      <div className="bg-white p-8 pb-5 ">
+      {/* Navigation Section */}
+      <div className="bg-white p-8 pb-5">
         <div className="flex flex-col md:flex-row items-center justify-center gap-2 w-full max-w-screen-xl mx-auto px-6 md:px-[30rem]">
           <p className="m-0 font-marlin font-normal text-xl text-black">
             Already got a hang of it? Then let's start learning!
@@ -234,4 +350,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default LearnPage;
