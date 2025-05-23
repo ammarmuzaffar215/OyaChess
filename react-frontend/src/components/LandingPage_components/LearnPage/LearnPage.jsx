@@ -3,22 +3,11 @@ import PublicNavbar from "../../Layouts/PublicNavbar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { Accordion, AccordionTab } from "primereact/accordion";
-import { Chessboard } from "react-chessboard";
 import Board1 from "./ChessFunction/Board1";
 import Board2 from "./ChessFunction/Board2";
 
 const LearnPage = () => {
   const navigate = useNavigate();
-  const [highlight, setHighlight] = useState("");
-
-  const refreshHighlight = (type) => {
-    if (highlight === type) {
-      setHighlight("");
-      setTimeout(() => setHighlight(type), 50); 
-    } else {
-      setHighlight(type);
-    }
-  };
 
   return (
     <>
@@ -114,75 +103,10 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <div className="flex flex-col md:flex-row justify-center items-start gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-                  <Board1 />
-                  <ul className="list-disc mt-4 text-left w-[400px] max-w-md px-4">
-                    <li className="text-xl py-1">
-                      There are <strong>64 squares</strong> in total.
-                    </li>
-                    <li className="text-xl py-1">
-                      32 <strong>light squares</strong> and 32{" "}
-                      <strong>dark squares</strong>.
-                    </li>
-                    <li className="text-xl py-1">
-                      The 1–8 horizontal coordinates are called "
-                      <strong>rank</strong>".
-                    </li>
-                    <li className="text-xl py-1">
-                      The a–h vertical coordinates are called "
-                      <strong>file</strong>".
-                    </li>
-                  </ul>
-                </div>
-                <div className="w-full md:w-1/2 flex flex-col items-center md:items-start mt-8 md:mt-0">
-                  <Board2 highlight={highlight} />
-                  <ul className="list-disc mt-4 text-left w-[400px] max-w-md px-4">
-                    <li className="text-xl py-1">
-                      The 1st to 4th rank is the{" "}
-                      <strong
-                        onClick={() => refreshHighlight("white")}
-                        className="cursor-pointer text-blue-700"
-                      >
-                        White side
-                      </strong>
-                      .
-                    </li>
-                    <li className="text-xl py-1">
-                      The 5th to 8th rank is the{" "}
-                      <strong
-                        onClick={() => refreshHighlight("black")}
-                        className="cursor-pointer text-blue-700"
-                      >
-                        Black side
-                      </strong>
-                      .
-                    </li>
-                    <li className="text-xl py-1">
-                      The a to d file is the{" "}
-                      <strong
-                        onClick={() => refreshHighlight("queen")}
-                        className="cursor-pointer text-blue-700"
-                      >
-                        Queen side
-                      </strong>
-                      .
-                    </li>
-                    <li className="text-xl py-1">
-                      The e to h file is the{" "}
-                      <strong
-                        onClick={() => refreshHighlight("king")}
-                        className="cursor-pointer text-blue-700"
-                      >
-                        King side
-                      </strong>
-                      .
-                    </li>
-                  </ul>
-                </div>
-              </div>
+              <Board1 />
             </AccordionTab>
 
+            {/* Lesson 3 */}
             <AccordionTab
               header={
                 <span className="text-2xl font-semibold">
@@ -190,17 +114,28 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <p className="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              <div className="m-0 space-y-4 flex justify-center">
+                <div className="grid grid-cols-3 gap-6 text-center">
+                  {[
+                    { src: "./assets/chess/wk.svg", label: "King" },
+                    { src: "./assets/chess/wq.svg", label: "Queen" },
+                    { src: "./assets/chess/wr.svg", label: "Rook" },
+                    { src: "./assets/chess/wb.svg", label: "Bishop" },
+                    { src: "./assets/chess/wn.svg", label: "Knight" },
+                    { src: "./assets/chess/wp.svg", label: "Pawn" },
+                  ].map(({ src, label }) => (
+                    <div
+                      key={label}
+                      className="flex flex-col items-center justify-center"
+                    >
+                      <img src={src} alt={label} className="w-40 h-40" />
+                      <p className="mt-2 font-medium">{label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </AccordionTab>
+
             <AccordionTab
               header={
                 <span className="text-2xl font-semibold">
@@ -208,16 +143,7 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <p className="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              <Board2 />
             </AccordionTab>
             <AccordionTab
               header={
