@@ -11,6 +11,15 @@ const LearnPage = () => {
   const navigate = useNavigate();
   const [highlight, setHighlight] = useState("");
 
+  const refreshHighlight = (type) => {
+    if (highlight === type) {
+      setHighlight("");
+      setTimeout(() => setHighlight(type), 50); 
+    } else {
+      setHighlight(type);
+    }
+  };
+
   return (
     <>
       <PublicNavbar />
@@ -59,6 +68,7 @@ const LearnPage = () => {
       <div className="bg-white p-8">
         <div className="card">
           <Accordion multiple activeIndex={[0]}>
+            {/* Lesson 1 */}
             <AccordionTab
               header={
                 <span className="text-2xl font-semibold">
@@ -96,6 +106,7 @@ const LearnPage = () => {
               </p>
             </AccordionTab>
 
+            {/* Lesson 2 */}
             <AccordionTab
               header={
                 <span className="text-2xl font-semibold">
@@ -104,7 +115,6 @@ const LearnPage = () => {
               }
             >
               <div className="flex flex-col md:flex-row justify-center items-start gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-                {/* Board 1 */}
                 <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
                   <Board1 />
                   <ul className="list-disc mt-4 text-left w-[400px] max-w-md px-4">
@@ -125,15 +135,13 @@ const LearnPage = () => {
                     </li>
                   </ul>
                 </div>
-
-                {/* Board 2 */}
                 <div className="w-full md:w-1/2 flex flex-col items-center md:items-start mt-8 md:mt-0">
                   <Board2 highlight={highlight} />
                   <ul className="list-disc mt-4 text-left w-[400px] max-w-md px-4">
                     <li className="text-xl py-1">
                       The 1st to 4th rank is the{" "}
                       <strong
-                        onClick={() => setHighlight("white")}
+                        onClick={() => refreshHighlight("white")}
                         className="cursor-pointer text-blue-700"
                       >
                         White side
@@ -143,7 +151,7 @@ const LearnPage = () => {
                     <li className="text-xl py-1">
                       The 5th to 8th rank is the{" "}
                       <strong
-                        onClick={() => setHighlight("black")}
+                        onClick={() => refreshHighlight("black")}
                         className="cursor-pointer text-blue-700"
                       >
                         Black side
@@ -153,7 +161,7 @@ const LearnPage = () => {
                     <li className="text-xl py-1">
                       The a to d file is the{" "}
                       <strong
-                        onClick={() => setHighlight("queen")}
+                        onClick={() => refreshHighlight("queen")}
                         className="cursor-pointer text-blue-700"
                       >
                         Queen side
@@ -163,7 +171,7 @@ const LearnPage = () => {
                     <li className="text-xl py-1">
                       The e to h file is the{" "}
                       <strong
-                        onClick={() => setHighlight("king")}
+                        onClick={() => refreshHighlight("king")}
                         className="cursor-pointer text-blue-700"
                       >
                         King side
