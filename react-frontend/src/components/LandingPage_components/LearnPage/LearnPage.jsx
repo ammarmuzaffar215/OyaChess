@@ -123,19 +123,19 @@ const LearnPage = () => {
               <div className="m-0 space-y-4 flex justify-center">
                 <div className="grid grid-cols-3 gap-6 text-center">
                   {[
-                    { src: "./assets/chess/wk.svg", label: "King" },
-                    { src: "./assets/chess/wq.svg", label: "Queen" },
-                    { src: "./assets/chess/wr.svg", label: "Rook" },
-                    { src: "./assets/chess/wb.svg", label: "Bishop" },
-                    { src: "./assets/chess/wn.svg", label: "Knight" },
                     { src: "./assets/chess/wp.svg", label: "Pawn" },
+                    { src: "./assets/chess/wn.svg", label: "Knight" },
+                    { src: "./assets/chess/wb.svg", label: "Bishop" },
+                    { src: "./assets/chess/wr.svg", label: "Rook" },
+                    { src: "./assets/chess/wq.svg", label: "Queen" },
+                    { src: "./assets/chess/wk.svg", label: "King" },
                   ].map(({ src, label }) => (
                     <div
                       key={label}
                       className="flex flex-col items-center justify-center"
                     >
                       <img src={src} alt={label} className="w-40 h-40" />
-                      <p className="mt-2 font-medium">{label}</p>
+                      <p className="mt-2 font-medium text-xl">{label}</p>
                     </div>
                   ))}
                 </div>
@@ -202,16 +202,26 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <p className="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              <div className="m-0 space-y-4 flex justify-center">
+                <div className="grid grid-cols-3 gap-6 text-center">
+                  {[
+                    { src: "./assets/chess/wp.svg", label: "1 point" },
+                    { src: "./assets/chess/wn.svg", label: "3 points" },
+                    { src: "./assets/chess/wb.svg", label: "3 points" },
+                    { src: "./assets/chess/wr.svg", label: "5 points" },
+                    { src: "./assets/chess/wq.svg", label: "9 points" },
+                    { src: "./assets/chess/wk.svg", label: "Infinite" },
+                  ].map(({ src, label }) => (
+                    <div
+                      key={label}
+                      className="flex flex-col items-center justify-center"
+                    >
+                      <img src={src} alt={label} className="w-40 h-40" />
+                      <p className="mt-2 font-medium text-xl">{label}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </AccordionTab>
             <AccordionTab
               header={

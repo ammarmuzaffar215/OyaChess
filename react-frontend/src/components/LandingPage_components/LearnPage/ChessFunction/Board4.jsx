@@ -152,7 +152,7 @@ const Board4 = () => {
 
   return (
     <div className="justify-center items-center gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-      <p className="text-3xl text-center font-bold">Knight</p>
+      <p className="text-3xl text-center font-semibold">Knight</p>
       <div className="flex flex-col md:flex-row justify-center items-start gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
         <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
           <Chessboard
