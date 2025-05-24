@@ -5,6 +5,12 @@ import { Button } from "primereact/button";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import Board1 from "./ChessFunction/Board1";
 import Board2 from "./ChessFunction/Board2";
+import Board3 from "./ChessFunction/Board3";
+import Board4 from "./ChessFunction/Board4";
+import Board5 from "./ChessFunction/Board5";
+import Board6 from "./ChessFunction/Board6";
+import Board7 from "./ChessFunction/Board7";
+import Board8 from "./ChessFunction/Board8";
 
 const LearnPage = () => {
   const navigate = useNavigate();
@@ -56,7 +62,7 @@ const LearnPage = () => {
       {/* Chess Lesson*/}
       <div className="bg-white p-8">
         <div className="card">
-          <Accordion multiple activeIndex={[0]}>
+          <Accordion multiple>
             {/* Lesson 1 */}
             <AccordionTab
               header={
@@ -152,16 +158,42 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <p className="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              <Board3 />
+              <div
+                style={{
+                  borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+                  margin: "0.5rem auto",
+                }}
+              ></div>
+              <Board4 />
+              <div
+                style={{
+                  borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+                  margin: "0.5rem auto",
+                }}
+              ></div>
+              <Board5 />
+              <div
+                style={{
+                  borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+                  margin: "0.5rem auto",
+                }}
+              ></div>
+              <Board6 />
+              <div
+                style={{
+                  borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+                  margin: "0.5rem auto",
+                }}
+              ></div>
+              <Board7 />
+              <div
+                style={{
+                  borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+                  margin: "0.5rem auto",
+                }}
+              ></div>
+              <Board8 />
             </AccordionTab>
             <AccordionTab
               header={
