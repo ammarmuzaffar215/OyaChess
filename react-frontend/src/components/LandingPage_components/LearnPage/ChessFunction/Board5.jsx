@@ -152,47 +152,59 @@ const Board5 = () => {
           return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
         })();
 
+  const infoTexts = [
+    'Bishop moves *diagonally* in an "X" pattern and can move backward.',
+    "Bishop *cannot jump* over other pieces.",
+    "Bishop captures the *same way* it moves.",
+  ];
+
+  const positions = [positions1, positions2, positions3];
+  const arrows = [arrow1, arrow2, arrow3];
+  const indices = [posIndex1, posIndex2, posIndex3];
+
   return (
-    <div className="justify-center items-center gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-      <p className="text-3xl text-center font-semibold">Bishop</p>
-      <div className="flex flex-col md:flex-row justify-center items-start gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-          <Chessboard
-            id="Board5-1"
-            boardWidth={300}
-            arePiecesDraggable={false}
-            position={positions1[posIndex1]}
-            customArrows={arrow1}
-          />
-          <p className=" mt-4 text-center w-[300px] px-2 text-xl  ">
-            Bishop moves <strong>diagonally</strong> in an "X" pattern and can
-            move backward.
-          </p>
-        </div>
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-          <Chessboard
-            id="Board5-2"
-            boardWidth={300}
-            arePiecesDraggable={false}
-            position={positions2[posIndex2]}
-            customArrows={arrow2}
-          />
-          <p className=" mt-4 text-center w-[300px] px-2 text-xl  ">
-            Bishop <strong>cannot jump</strong> over other pieces.
-          </p>
-        </div>
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-          <Chessboard
-            id="Board5-3"
-            boardWidth={300}
-            arePiecesDraggable={false}
-            position={positions3[posIndex3]}
-            customArrows={arrow3}
-          />
-          <p className=" mt-4 text-center w-[300px] px-2 text-xl  ">
-            Bishop captures the <strong>same way</strong> it moves.
-          </p>
-        </div>
+    <div className="w-full max-w-screen-xl mx-auto p-6">
+      <p
+        className="text-3xl text-center font-semibold mb-6"
+        style={{ color: "rgba(133, 114, 81, 1)" }}
+      >
+        Bishop
+      </p>
+      <div className="flex flex-wrap justify-center items-start gap-6">
+        {[
+          {
+            id: "Board5-1",
+            pos: positions1[posIndex1],
+            arrows: arrow1,
+            text: 'Bishop moves <strong>diagonally</strong> in an "X" pattern and can move backward.',
+          },
+          {
+            id: "Board5-2",
+            pos: positions2[posIndex2],
+            arrows: arrow2,
+            text: "Bishop <strong>cannot jump</strong> over other pieces.",
+          },
+          {
+            id: "Board5-3",
+            pos: positions3[posIndex3],
+            arrows: arrow3,
+            text: "Bishop captures the <strong>same way</strong> it moves.",
+          },
+        ].map(({ id, pos, arrows, text }) => (
+          <div key={id} className="flex flex-col items-center w-[250px]">
+            <Chessboard
+              id={id}
+              boardWidth={250}
+              arePiecesDraggable={false}
+              position={pos}
+              customArrows={arrows}
+            />
+            <p
+              className="mt-4 text-center text-lg px-2"
+              dangerouslySetInnerHTML={{ __html: text }}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

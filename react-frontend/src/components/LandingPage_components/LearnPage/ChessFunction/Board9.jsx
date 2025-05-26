@@ -70,7 +70,7 @@ const findPawnMove = (fromFen, toFen) => {
   return null;
 };
 
-const Board8 = () => {
+const Board9 = () => {
   const positions1 = [
     "8/4k3/8/8/8/8/4P3/4K3",
     "8/4k3/8/8/8/8/3KP3/8",
@@ -171,46 +171,87 @@ const Board8 = () => {
           return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
         })();
 
-  const infoTexts = [
-    "King moves <strong>one square</strong> in any direction.",
-    "King must avoid <strong>moving into check</strong>.",
-    "King cannot move to a square that is controlled by the opponent's pieces (squares that allow the king to be captured). It will be considered as illegal move.",
-  ];
-
-  const positions = [positions1, positions2, positions3];
-  const arrows = [arrow1, arrow2, arrow3];
-  const indices = [posIndex1, posIndex2, posIndex3];
-
   return (
-    <div className="w-full max-w-screen-xl mx-auto p-6">
+    <div className="justify-center items-center gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
       <p
-        className="text-3xl text-center font-semibold mb-6"
+        className="text-3xl text-center font-semibold pb-6"
         style={{ color: "rgba(133, 114, 81, 1)" }}
       >
-        King
+        Check
       </p>
-      <div className="flex flex-wrap justify-center items-start gap-6">
-        {positions.map((posSet, idx) => (
-          <div
-            key={`king-board-${idx}`}
-            className="flex flex-col items-center w-[250px]"
-          >
-            <Chessboard
-              id={`king-${idx}`}
-              boardWidth={250}
-              arePiecesDraggable={false}
-              position={posSet[indices[idx]]}
-              customArrows={arrows[idx]}
-            />
-            <p
-              className="mt-4 text-center text-lg px-2"
-              dangerouslySetInnerHTML={{ __html: infoTexts[idx] }}
-            />
-          </div>
-        ))}
+      <p className="m-0 font-medium text-2xl">
+        What is a check?
+        <div
+          style={{
+            borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+            margin: "0.5rem auto",
+          }}
+        ></div>
+      </p>
+      <p className="m-0 text-lg">
+        Check is a move where it attacks the opponent's king and threatens to
+        capture it on the next turn.
+        <br />
+        <br />
+        The player that receives the check <strong>
+          must stop the check
+        </strong>{" "}
+        by saving their king.
+        <br />
+        <br />
+        If a check is ignored and the player does not save their king, it will
+        count as an <strong>illegal move</strong>.
+      </p>
+
+      <div className="flex flex-col md:flex-row justify-center items-start gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
+        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+          <Chessboard
+            id="Board8-1"
+            boardWidth={250}
+            arePiecesDraggable={false}
+            position={positions1[posIndex1]}
+            customArrows={arrow1}
+          />
+          <p className=" mt-4 text-center w-[250px] px-2 text-xl  ">
+            First way to stop check:
+            <br />
+            <br />
+            <strong>Avoid</strong> the check.
+          </p>
+        </div>
+        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+          <Chessboard
+            id="Board8-2"
+            boardWidth={250}
+            arePiecesDraggable={false}
+            position={positions2[posIndex2]}
+            customArrows={arrow2}
+          />
+          <p className=" mt-4 text-center w-[250px] px-2 text-xl  ">
+            Second way to stop check:
+            <br />
+            <br />
+            <strong>Block</strong> the check.
+          </p>
+        </div>
+        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+          <Chessboard
+            id="Board8-3"
+            boardWidth={250}
+            arePiecesDraggable={false}
+            position={positions3[posIndex3]}
+            customArrows={arrow3}
+          />
+          <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
+            Third way to stop check:
+            <br />
+            <br />
+            <strong>Capture</strong> the checking piece.
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Board8;
+export default Board9;

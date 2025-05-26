@@ -7,11 +7,11 @@ const Board2 = () => {
       <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
         <Chessboard
           id="Board2-1"
-          boardWidth={300}
+          boardWidth={250}
           arePiecesDraggable={false}
           position="8/pppppppp/8/8/8/8/PPPPPPPP/8"
         />
-        <p className=" mt-4 text-center max-w-md px-2 text-xl ">
+        <p className=" mt-4 text-center w-[250px] text-lg ">
           Step 1:
           <br />
           <br />
@@ -24,11 +24,11 @@ const Board2 = () => {
       <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
         <Chessboard
           id="Board2-2"
-          boardWidth={300}
+          boardWidth={250}
           arePiecesDraggable={false}
           position="rnb2bnr/pppppppp/8/8/8/8/PPPPPPPP/RNB2BNR"
         />
-        <p className=" mt-4 text-center max-w-md px-2 text-xl ">
+        <p className=" mt-4 text-center w-[250px] text-lg ">
           Step 2:
           <br />
           <br />
@@ -39,11 +39,11 @@ const Board2 = () => {
       <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
         <Chessboard
           id="Board2-3"
-          boardWidth={300}
+          boardWidth={250}
           arePiecesDraggable={false}
           position="rnbq1bnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQ1BNR"
         />
-        <p className=" mt-4 text-center max-w-md px-2 text-xl ">
+        <p className=" mt-4 text-center w-[250px] text-lg ">
           Step 3:
           <br />
           <br />
@@ -54,11 +54,11 @@ const Board2 = () => {
       <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
         <Chessboard
           id="Board2-4"
-          boardWidth={300}
+          boardWidth={250}
           arePiecesDraggable={false}
           position="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR"
         />
-        <p className=" mt-4 text-center max-w-md px-2 text-xl ">
+        <p className=" mt-4 text-center w-[250px] text-lg ">
           Step 4:
           <br />
           <br />

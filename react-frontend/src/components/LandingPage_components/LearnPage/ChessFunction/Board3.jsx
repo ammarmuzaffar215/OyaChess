@@ -142,68 +142,59 @@ const Board3 = () => {
     return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
   })();
 
-  return (
-    <div className="justify-center items-center gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-      <p className="text-3xl text-center font-semibold">Pawn</p>
-
-      <div className="flex flex-col md:flex-row justify-center items-start gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
+ return (
+  <div className="w-full max-w-screen-xl mx-auto p-6">
+    <p
+      className="text-3xl text-center font-semibold mb-6"
+      style={{ color: "rgba(133, 114, 81, 1)" }}
+    >
+      Pawn
+    </p>
+    <div className="flex flex-wrap justify-center items-start gap-6">
+      {[
+        {
+          id: "Board3-1",
+          pos: positions1[posIndex1],
+          arrows: arrow1,
+          text: 'Pawn can only move forward <strong>one step</strong> each move.',
+        },
+        {
+          id: "Board3-2",
+          pos: positions2[posIndex2],
+          arrows: arrow2,
+          text: 'But the <strong>first time</strong> a pawn moves, it can also move forward <strong>two squares</strong>.',
+        },
+        {
+          id: "Board3-3",
+          pos: positions3[posIndex3],
+          arrows: arrow3,
+          text: 'Pawn captures <strong>sideways</strong> (left and right), and will continue to move on the new file it transferred to.',
+        },
+        {
+          id: "Board3-4",
+          pos: positions4[posIndex4],
+          arrows: arrow4,
+          text: 'Any piece in front of a pawn will <strong>prevent</strong> the pawn from moving further, unless the blocker moves away.',
+        },
+      ].map(({ id, pos, arrows, text }) => (
+        <div key={id} className="flex flex-col items-center w-[250px]">
           <Chessboard
-            id="Board3-1"
-            boardWidth={300}
+            id={id}
+            boardWidth={250}
             arePiecesDraggable={false}
-            position={positions1[posIndex1]}
-            customArrows={arrow1}
+            position={pos}
+            customArrows={arrows}
           />
-          <p className="mt-4 text-center max-w-md px-2 text-xl">
-            Pawn can only move forward <strong>one step</strong> each move.
-          </p>
-        </div>
-
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-          <Chessboard
-            id="Board3-2"
-            boardWidth={300}
-            arePiecesDraggable={false}
-            position={positions2[posIndex2]}
-            customArrows={arrow2}
+          <p
+            className="mt-4 text-center text-lg px-2"
+            dangerouslySetInnerHTML={{ __html: text }}
           />
-          <p className="mt-4 text-center max-w-md px-2 text-xl">
-            But the <strong>first time</strong> a pawn move, it can also move
-            forward <strong>two squares</strong>.
-          </p>
         </div>
-
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-          <Chessboard
-            id="Board3-3"
-            boardWidth={300}
-            arePiecesDraggable={false}
-            position={positions3[posIndex3]}
-            customArrows={arrow3}
-          />
-          <p className="mt-4 text-center max-w-md px-2 text-xl">
-            Pawn captures <strong>sideway</strong> (left and right), and will
-            continue to move on the new file it transferred to.
-          </p>
-        </div>
-
-        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start">
-          <Chessboard
-            id="Board3-4"
-            boardWidth={300}
-            arePiecesDraggable={false}
-            position={positions4[posIndex4]}
-            customArrows={arrow4}
-          />
-          <p className="mt-4 text-center max-w-md px-2 text-xl">
-            Any piece in front of a pawn will <strong>prevent</strong> the pawn
-            from moving further, unless the blocker moves away.
-          </p>
-        </div>
-      </div>
+      ))}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Board3;

@@ -11,6 +11,7 @@ import Board5 from "./ChessFunction/Board5";
 import Board6 from "./ChessFunction/Board6";
 import Board7 from "./ChessFunction/Board7";
 import Board8 from "./ChessFunction/Board8";
+import Board9 from "./ChessFunction/Board9";
 
 const LearnPage = () => {
   const navigate = useNavigate();
@@ -71,34 +72,36 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <p className="m-0 font-medium text-2xl">
-                How to start a chess game?
-                <div
-                  style={{
-                    borderTop: "2px solid #000000",
-                    margin: "0.5rem auto",
-                  }}
-                ></div>
-              </p>
-              <p className="m-0 text-xl">
-                To play chess, <strong>TWO</strong> players are needed. This is
-                because chess has two sides, White and Black.
-              </p>
-              <br />
-              <br />
-              <p className="m-0 font-medium text-2xl">
-                Who starts the game first?
-                <div
-                  style={{
-                    borderTop: "2px solid #000000",
-                    margin: "0.5rem auto",
-                  }}
-                ></div>
-              </p>
-              <p className="m-0 text-xl">
-                White will start first, and then followed by Black. The players
-                alternate move until the game ends.
-              </p>
+              <div className="justify-center items-center gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
+                <p className="m-0 font-medium text-xl">
+                  How to start a chess game?
+                  <div
+                    style={{
+                      borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+                      margin: "0.5rem auto",
+                    }}
+                  ></div>
+                </p>
+                <p className="m-0 text-lg">
+                  To play chess, <strong>TWO</strong> players are needed. This
+                  is because chess has two sides, White and Black.
+                </p>
+                <br />
+                <br />
+                <p className="m-0 font-medium text-xl">
+                  Who starts the game first?
+                  <div
+                    style={{
+                      borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+                      margin: "0.5rem auto",
+                    }}
+                  ></div>
+                </p>
+                <p className="m-0 text-lg">
+                  White will start first, and then followed by Black. The
+                  players alternate move until the game ends.
+                </p>
+              </div>
             </AccordionTab>
 
             {/* Lesson 2 */}
@@ -230,16 +233,7 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <p className="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              <Board9 />
             </AccordionTab>
             <AccordionTab
               header={
