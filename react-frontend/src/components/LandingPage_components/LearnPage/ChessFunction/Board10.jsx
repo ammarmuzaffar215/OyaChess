@@ -43,8 +43,6 @@ const findMove = (fromFen, toFen) => {
             fromPiece === "k" ||
             fromPiece === "Q" ||
             fromPiece === "q" ||
-            fromPiece === "R" ||
-            fromPiece === "r" ||
             fromPiece === "B" ||
             fromPiece === "b" ||
             fromPiece === "N" ||
@@ -72,69 +70,52 @@ const findMove = (fromFen, toFen) => {
   return null;
 };
 
-const Board9 = () => {
+const Board10 = () => {
   const positions1 = [
-    "8/4k3/8/8/8/8/4P3/4K3",
-    "8/4k3/8/8/8/8/3KP3/8",
-    "8/8/4k3/8/8/4K3/4P3/8",
-    "8/8/8/3k4/8/4K3/4P3/8",
-    "8/8/8/3k4/8/3K4/4P3/8",
-    "8/8/8/4k3/8/3K4/4P3/8",
-    "8/8/8/4k3/8/4K3/4P3/8",
-    "8/8/4k3/8/8/4K3/4P3/8",
-    "8/8/4k3/8/4K3/8/4P3/8",
+    "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQK2R",
+    "r1bqkb1r/pppp1ppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQ1RK1",
   ];
 
   const positions2 = [
-    "8/8/PP5K/2PPk2p/7p/5p2/8/8",
-    "8/8/PP6/2PPk2K/7p/5p2/8/8",
-    "8/8/PP6/2Pk3K/7p/5p2/8/8",
-    "8/8/PP6/2Pk4/7K/5p2/8/8",
-    "8/8/PP6/2k5/7K/5p2/8/8",
-    "8/8/PP6/2k5/8/5pK1/8/8",
-    "8/8/Pk6/8/8/5pK1/8/8",
-    "8/8/Pk6/8/8/5K2/8/8",
-    "8/8/k7/8/8/5K2/8/8",
+    "r2q1rk1/pp1bppbp/2np1np1/8/2BNP3/2N1BP2/PPPQ2PP/R3K2R",
+    "r2q1rk1/pp1bppbp/2np1np1/8/2BNP3/2N1BP2/PPPQ2PP/2KR3R",
   ];
 
   const positions3 = [
-    "8/8/8/3k4/1P5R/8/1B2NN2/4K3",
-    "8/8/8/3k4/1P3N1R/8/1B3N2/4K3",
-    "8/8/3k4/8/1P3N1R/8/1B3N2/4K3",
-    "8/8/3k4/8/1P2NN1R/8/1B6/4K3",
-    "8/4k3/8/8/1P2NN1R/8/1B6/4K3",
-    "8/4k2R/8/8/1P2NN2/8/1B6/4K3",
-    "3k4/7R/8/8/1P2NN2/8/1B6/4K3",
-    "3k4/7R/4N3/8/1P2N3/8/1B6/4K3",
-    "2k5/7R/4N3/8/1P2N3/8/1B6/4K3",
-    "2k5/7R/3NN3/8/1P6/8/1B6/4K3",
-    "1k6/7R/3NN3/8/1P6/8/1B6/4K3",
-    "1k6/7R/3NN3/8/1P1B4/8/8/4K3",
-    "k7/7R/3NN3/8/1P1B4/8/8/4K3",
-    "k7/7R/3NN3/1P6/3B4/8/8/4K3",
-    "1k6/7R/3NN3/1P6/3B4/8/8/4K3",
+    "8/8/8/8/4p3/8/3P4/8",
+    "8/8/8/8/3Pp3/8/8/8",
+    "8/8/8/8/8/3p4/8/8",
   ];
 
   const positions4 = [
-    "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR",
-    "r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR",
+    "r1bqk2r/1ppnppbp/3p1np1/8/p2PP3/P4N2/1PPNBPPP/R1BQ1RK1",
+    "r1bqk2r/1ppnppbp/3p1np1/8/pP1PP3/P4N2/2PNBPPP/R1BQ1RK1",
+    "r1bqk2r/1ppnppbp/3p1np1/8/3PP3/Pp3N2/2PNBPPP/R1BQ1RK1",
   ];
 
-  const positions5 = ["4k3/1R6/R7/8/4K3/8/8/8", "R3k3/1R6/8/8/4K3/8/8/8"];
+  const positions5 = [
+    "8/5K1k/8/8/8/8/P7/8",
+    "8/5K1k/8/8/P7/8/8/8",
+    "8/5K2/7k/8/P7/8/8/8",
+    "8/5K2/7k/P7/8/8/8/8",
+    "8/5K1k/8/P7/8/8/8/8",
+    "8/5K1k/P7/8/8/8/8/8",
+    "8/5K2/P6k/8/8/8/8/8",
+    "8/P4K2/7k/8/8/8/8/8",
+    "8/P4K1k/8/8/8/8/8/8",
+    "Q7/5K1k/8/8/8/8/8/8",
+    "Q6k/5K2/8/8/8/8/8/8",
+    "7k/5K2/8/8/8/8/8/7Q",
+  ];
 
   const positions6 = [
-    "6rk/5ppp/8/6N1/7P/6P1/5PK1/8",
-    "6rk/5Npp/8/8/7P/6P1/5PK1/8",
+    "8/3qkP1r/p7/1p6/1P1Q4/1KP5/8/8",
+    "8/3QkP1r/p7/1p6/1P6/1KP5/8/8",
+    "8/3k1P1r/p7/1p6/1P6/1KP5/8/8",
+    "5N2/3k3r/p7/1p6/1P6/1KP5/8/8",
+    "5N2/4k2r/p7/1p6/1P6/1KP5/8/8",
+    "8/4k2N/p7/1p6/1P6/1KP5/8/8",
   ];
-
-  const positions7 = ["k7/7Q/4K3/8/8/8/8/8", "k7/2Q5/4K3/8/8/8/8/8"];
-
-  const positions8 = [
-    "7k/5K2/2p2N2/2P5/p7/1P6/8/8",
-    "7k/5K2/2p2N2/2P5/P7/8/8/8",
-  ];
-
-  const positions9 = ["4k3/4P3/5K2/8/8/8/8/8", "4k3/4P3/4K3/8/8/8/8/8"];
 
   const [posIndex1, setPosIndex1] = useState(0);
   const [posIndex2, setPosIndex2] = useState(0);
@@ -142,9 +123,6 @@ const Board9 = () => {
   const [posIndex4, setPosIndex4] = useState(0);
   const [posIndex5, setPosIndex5] = useState(0);
   const [posIndex6, setPosIndex6] = useState(0);
-  const [posIndex7, setPosIndex7] = useState(0);
-  const [posIndex8, setPosIndex8] = useState(0);
-  const [posIndex9, setPosIndex9] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -187,27 +165,6 @@ const Board9 = () => {
     }, 2000);
     return () => clearTimeout(timer);
   }, [posIndex6]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPosIndex7((prev) => (prev === positions7.length - 1 ? 0 : prev + 1));
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [posIndex7]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPosIndex8((prev) => (prev === positions8.length - 1 ? 0 : prev + 1));
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [posIndex8]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setPosIndex9((prev) => (prev === positions9.length - 1 ? 0 : prev + 1));
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [posIndex9]);
 
   const arrow1 =
     posIndex1 === 0
@@ -275,49 +232,16 @@ const Board9 = () => {
           return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
         })();
 
-  const arrow7 =
-    posIndex7 === 0
-      ? []
-      : (() => {
-          const move = findMove(
-            positions7[posIndex7 - 1],
-            positions7[posIndex7]
-          );
-          return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
-        })();
-
-  const arrow8 =
-    posIndex8 === 0
-      ? []
-      : (() => {
-          const move = findMove(
-            positions8[posIndex8 - 1],
-            positions8[posIndex8]
-          );
-          return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
-        })();
-
-  const arrow9 =
-    posIndex9 === 0
-      ? []
-      : (() => {
-          const move = findMove(
-            positions9[posIndex9 - 1],
-            positions9[posIndex9]
-          );
-          return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
-        })();
-
   return (
     <div className="justify-center items-center gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
       <p
         className="text-3xl text-center font-semibold pb-6"
         style={{ color: "rgba(133, 114, 81, 1)" }}
       >
-        Check
+        Castling
       </p>
       <p className="m-0 font-medium text-2xl">
-        What is a check?
+        What is a castling?
         <div
           style={{
             borderTop: "2px solid rgba(0, 0, 0, 0.2)",
@@ -326,18 +250,8 @@ const Board9 = () => {
         ></div>
       </p>
       <p className="m-0 text-lg">
-        Check is a move where it attacks the opponent's king and threatens to
-        capture it on the next turn.
-        <br />
-        <br />
-        The player that receives the check <strong>
-          must stop the check
-        </strong>{" "}
-        by saving their king.
-        <br />
-        <br />
-        If a check is ignored and the player does not save their king, it will
-        count as an <strong>illegal move</strong>.
+        Castling is a move where the king move two steps towards one of the rook
+        and the rook switch next to the king.
       </p>
 
       <div className="flex flex-wrap justify-center items-start gap-6 py-8">
@@ -350,10 +264,7 @@ const Board9 = () => {
             customArrows={arrow1}
           />
           <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            First way to stop check:
-            <br />
-            <br />
-            <strong>Avoid</strong> the check.
+            Castling Kingside
           </p>
         </div>
         <div className="flex flex-col items-center w-[250px]">
@@ -365,12 +276,91 @@ const Board9 = () => {
             customArrows={arrow2}
           />
           <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Second way to stop check:
-            <br />
-            <br />
-            <strong>Block</strong> the check.
+            Castling Queenside
           </p>
         </div>
+      </div>
+      <p className="m-0 font-medium text-2xl">
+        Conditions needed to perform castling:
+        <div
+          style={{
+            borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+            margin: "0.5rem auto",
+          }}
+        ></div>
+      </p>
+      <p className="m-0 text-lg pb-8">
+        1. The king and the rook (the rook that wants to perform castling) have
+        not moved.
+        <br />
+        <br />
+        2. The king is not in check.
+        <br />
+        <br />
+        3. The squares between the king and the involved rook are empty.
+        <br />
+        <br />
+        4. The two squares the king move through are not controlled by the
+        opponent's pieces. Meaning:
+        <ul className="list-disc list-inside ml-2 text-lg">
+          <li>
+            If White king wants to castle kingside, make sure both{" "}
+            <strong>f1 and g1</strong> are not controlled by any Black pieces.
+          </li>
+          <li>
+            If White king wants to castle queenside, make sure both{" "}
+            <strong>c1 and d1</strong> are not controlled by any Black pieces.
+          </li>
+          <li>
+            If Black king wants to castle kingside, make sure both{" "}
+            <strong>f8 and g8</strong> are not controlled by any White pieces.
+          </li>
+          <li>
+            If Black king wants to castle queenside, make sure both{" "}
+            <strong>c8 and d8</strong> are not controlled by any White pieces.
+          </li>
+        </ul>
+      </p>
+
+      <div
+        style={{
+          borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+          margin: "0.5rem auto",
+        }}
+      ></div>
+
+      <p
+        className="text-3xl text-center font-semibold py-6"
+        style={{ color: "rgba(133, 114, 81, 1)" }}
+      >
+        En-Passant
+      </p>
+      <p className="m-0 font-medium text-2xl">
+        What is en-passant?
+        <div
+          style={{
+            borderTop: "2px solid rgba(0, 0, 0, 0.2)",
+            margin: "0.5rem auto",
+          }}
+        ></div>
+      </p>
+      <ul className="m-0 text-lg list-disc list-inside">
+        <li>
+          En-passant can be done when a pawn moves forward two square from its
+          starting square, but end up next to an opponent's pawn.
+        </li>
+        <li>
+          That pawn then can be captured like a normal capture as if it only
+          moved one square forward.
+        </li>
+        <li>
+          En-passant can only be done on the turn right after the two-square
+          pawn advance. If the turn is used for moving other pieces, then
+          en-passant can no longer be done on that pawn.
+        </li>
+      </ul>
+
+      <div className="flex flex-wrap justify-center items-start gap-6 py-8">
         <div className="flex flex-col items-center w-[250px]">
           <Chessboard
             id="Board9-3"
@@ -380,14 +370,22 @@ const Board9 = () => {
             customArrows={arrow3}
           />
           <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Third way to stop check:
-            <br />
-            <br />
-            <strong>Capture</strong> the checking piece.
+            Example 1
+          </p>
+        </div>
+        <div className="flex flex-col items-center w-[250px]">
+          <Chessboard
+            id="Board9-4"
+            boardWidth={250}
+            arePiecesDraggable={false}
+            position={positions4[posIndex4]}
+            customArrows={arrow4}
+          />
+          <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
+            Example 2
           </p>
         </div>
       </div>
-
       <div
         style={{
           borderTop: "2px solid rgba(0, 0, 0, 0.2)",
@@ -398,10 +396,10 @@ const Board9 = () => {
         className="text-3xl text-center font-semibold py-6"
         style={{ color: "rgba(133, 114, 81, 1)" }}
       >
-        Checkmate
+        Pawn Promotion
       </p>
       <p className="m-0 font-medium text-2xl">
-        What is a checkmate?
+        What is pawn promotion?
         <div
           style={{
             borderTop: "2px solid rgba(0, 0, 0, 0.2)",
@@ -410,32 +408,15 @@ const Board9 = () => {
         ></div>
       </p>
       <p className="m-0 text-lg">
-        Checkmate is a position where the king is in check, but there is no way
-        to stop the check.
+        Pawn promotion happens when a pawn reached the end of the board, meaning
+        it arrived at the first rank of the opponent's territory.
         <br />
         <br />
-        Player that gets their king checkmated loses the game.
-        <br />
-        <br />
-        If there is not enough material to checkmate the king, the game will
-        conclude as draw.
+        The pawn that reached the end can be promoted to any other pieces (free
+        to choose), except the king.
       </p>
 
       <div className="flex flex-wrap justify-center items-start gap-6 py-8">
-        <div className="flex flex-col items-center w-[250px]">
-          <Chessboard
-            id="Board9-4"
-            boardWidth={250}
-            arePiecesDraggable={false}
-            position={positions4[posIndex4]}
-            customArrows={arrow4}
-          />
-          <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Example 1
-            <br />
-            (Black gets checkmated)
-          </p>
-        </div>
         <div className="flex flex-col items-center w-[250px]">
           <Chessboard
             id="Board9-5"
@@ -445,9 +426,8 @@ const Board9 = () => {
             customArrows={arrow5}
           />
           <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Example 2
-            <br />
-            (Black gets checkmated)
+            The White pawn is promoted to a queen and can move like the original
+            queen.
           </p>
         </div>
         <div className="flex flex-col items-center w-[250px]">
@@ -459,87 +439,8 @@ const Board9 = () => {
             customArrows={arrow6}
           />
           <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Example 3
-            <br />
-            (Black gets checkmated)
-          </p>
-        </div>
-      </div>
-
-      <div
-        style={{
-          borderTop: "2px solid rgba(0, 0, 0, 0.2)",
-          margin: "0.5rem auto",
-        }}
-      ></div>
-      <p
-        className="text-3xl text-center font-semibold py-6"
-        style={{ color: "rgba(133, 114, 81, 1)" }}
-      >
-        Stalemate
-      </p>
-      <p className="m-0 font-medium text-2xl">
-        What is a stalemate?
-        <div
-          style={{
-            borderTop: "2px solid rgba(0, 0, 0, 0.2)",
-            margin: "0.5rem auto",
-          }}
-        ></div>
-      </p>
-      <p className="m-0 text-lg">
-        Stalemate is a position where the king is not in check, but has no safe
-        square to go to, and other pieces are practically impossible to move.
-        <br />
-        <br />
-        In short, stalemate is when it is your turn to move but there is no
-        legal move to be done.
-        <br />
-        <br />
-        Stalemate results in draw, even if there are still a lot of pieces left.
-      </p>
-
-      <div className="flex flex-wrap justify-center items-start gap-6 py-8">
-        <div className="flex flex-col items-center w-[250px]">
-          <Chessboard
-            id="Board9-7"
-            boardWidth={250}
-            arePiecesDraggable={false}
-            position={positions7[posIndex7]}
-            customArrows={arrow7}
-          />
-          <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Example 1
-            <br />
-            (Black gets stalemated)
-          </p>
-        </div>
-        <div className="flex flex-col items-center w-[250px]">
-          <Chessboard
-            id="Board9-8"
-            boardWidth={250}
-            arePiecesDraggable={false}
-            position={positions8[posIndex8]}
-            customArrows={arrow8}
-          />
-          <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Example 2
-            <br />
-            (Black gets stalemated)
-          </p>
-        </div>
-        <div className="flex flex-col items-center w-[250px]">
-          <Chessboard
-            id="Board9-9"
-            boardWidth={250}
-            arePiecesDraggable={false}
-            position={positions9[posIndex9]}
-            customArrows={arrow9}
-          />
-          <p className=" mt-4 text-center w-[250px] px-2 text-lg  ">
-            Example 3
-            <br />
-            (Black gets stalemated)
+            The White pawn is promoted to a knight and can move like the
+            original knight.
           </p>
         </div>
       </div>
@@ -547,4 +448,4 @@ const Board9 = () => {
   );
 };
 
-export default Board9;
+export default Board10;

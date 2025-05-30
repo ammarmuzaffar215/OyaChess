@@ -12,6 +12,7 @@ import Board6 from "./ChessFunction/Board6";
 import Board7 from "./ChessFunction/Board7";
 import Board8 from "./ChessFunction/Board8";
 import Board9 from "./ChessFunction/Board9";
+import Board10 from "./ChessFunction/Board10";
 
 const LearnPage = () => {
   const navigate = useNavigate();
@@ -242,72 +243,24 @@ const LearnPage = () => {
                 </span>
               }
             >
-              <p className="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-                accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
-                quae ab illo inventore veritatis et quasi architecto beatae
-                vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia
-                voluptas sit aspernatur aut odit aut fugit, sed quia
-                consequuntur magni dolores eos qui ratione voluptatem sequi
-                nesciunt. Consectetur, adipisci velit, sed quia non numquam eius
-                modi.
-              </p>
+              <Board10 />
             </AccordionTab>
           </Accordion>
         </div>
       </div>
 
-      {/* Section: Closing intro */}
-      <div className="bg-emerald-500 p-8">
-        <div className="flex flex-col md:flex-row items-center justify-center gap-2 w-full max-w-screen-xl mx-auto px-6 md:px-[30rem]">
-          <p className="m-0 font-marlin font-normal text-xl text-black">
-            But of course, first you need to know what chess looks like. It is
-            not the same as checkers. Here I put a video example of a chess game
-            played by two Chess Grandmasters: Magnus Carlsen VS Hikaru Nakamura
-            in 2019. (Source: ChessBase India). You can also refer to the 2d
-            chess board.
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 w-full max-w-screen-xl mx-auto p-6 md:px-[30rem]">
-          <div className="basis-full md:basis-1/2 w-full">
-            <div className="aspect-video w-full">
-              <iframe
-                className="w-full h-full"
-                src="https://www.youtube.com/embed/L2cbT3elGl8?si=P2xeB1Qt5Jaon69k"
-                title="YouTube video player"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-              ></iframe>
-            </div>
-          </div>
-          <div className="basis-full md:basis-1/2 w-full">
-            <div className="aspect-video w-full">
-              <iframe
-                className="w-full h-full"
-                src="https://lichess.org/study/embed/lgmQP9MX/UgHJJxVG#0"
-                title="Magnus Carlsen vs Hikaru Nakamura"
-                frameBorder="0"
-                allowFullScreen
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Navigation Section */}
-      <div className="bg-white p-8 pb-5">
+      <div className="bg-white  pb-5">
         <div className="flex flex-col md:flex-row items-center justify-center gap-2 w-full max-w-screen-xl mx-auto px-6 md:px-[30rem]">
           <p className="m-0 font-marlin font-normal text-xl text-black">
-            Already got a hang of it? Then let's start learning!
+           Want to learn more? Join my classes now to become a good chess player!
           </p>
         </div>
         <div className="flex flex-col md:flex-row items-center justify-center gap-2 w-full max-w-screen-xl mx-auto p-5 md:px-[30rem]">
           <Button
-            label="Click here to jump to Learn"
+            label="Click here to jump to Coaching"
             className="!border-black bg-green-500 text-white"
-            onClick={() => navigate("/learn")}
+            onClick={() => navigate("/coaching")}
           />
         </div>
         <div className="flex items-center justify-center w-full max-w-screen-xl mx-auto p-1 mt-5 md:px-[30rem]">

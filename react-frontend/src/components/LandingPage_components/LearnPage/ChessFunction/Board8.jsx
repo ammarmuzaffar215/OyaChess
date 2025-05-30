@@ -27,7 +27,7 @@ const indexToSquare = (row, col) => {
   return files[col] + (8 - row);
 };
 
-const findPawnMove = (fromFen, toFen) => {
+const findMove = (fromFen, toFen) => {
   const fromBoard = fenToBoardArray(fromFen);
   const toBoard = fenToBoardArray(toFen);
 
@@ -142,7 +142,7 @@ const Board8 = () => {
     posIndex1 === 0
       ? []
       : (() => {
-          const move = findPawnMove(
+          const move = findMove(
             positions1[posIndex1 - 1],
             positions1[posIndex1]
           );
@@ -153,7 +153,7 @@ const Board8 = () => {
     posIndex2 === 0
       ? []
       : (() => {
-          const move = findPawnMove(
+          const move = findMove(
             positions2[posIndex2 - 1],
             positions2[posIndex2]
           );
@@ -164,7 +164,7 @@ const Board8 = () => {
     posIndex3 === 0
       ? []
       : (() => {
-          const move = findPawnMove(
+          const move = findMove(
             positions3[posIndex3 - 1],
             positions3[posIndex3]
           );

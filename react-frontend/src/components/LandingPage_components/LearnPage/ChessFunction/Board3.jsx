@@ -27,7 +27,7 @@ const indexToSquare = (row, col) => {
   return files[col] + (8 - row);
 };
 
-const findPawnMove = (fromFen, toFen) => {
+const findMove = (fromFen, toFen) => {
   const fromBoard = fenToBoardArray(fromFen);
   const toBoard = fenToBoardArray(toFen);
 
@@ -37,12 +37,16 @@ const findPawnMove = (fromFen, toFen) => {
       const toPiece = toBoard[row][col];
 
       if (fromPiece !== toPiece) {
-        if (fromPiece && (fromPiece === "P" || fromPiece === "p") && toPiece !== fromPiece) {
+        if (
+          fromPiece &&
+          (fromPiece === "P" || fromPiece === "p") &&
+          toPiece !== fromPiece
+        ) {
           for (let r = 0; r < 8; r++) {
             for (let c = 0; c < 8; c++) {
               if (
-                (toBoard[r][c] === fromPiece) &&
-                (fromBoard[r][c] !== fromPiece)
+                toBoard[r][c] === fromPiece &&
+                fromBoard[r][c] !== fromPiece
               ) {
                 const fromSquare = indexToSquare(row, col);
                 const toSquare = indexToSquare(r, c);
@@ -122,79 +126,102 @@ const Board3 = () => {
     return () => clearTimeout(timer);
   }, [posIndex4]);
 
-  const arrow1 = posIndex1 === 0 ? [] : (() => {
-    const move = findPawnMove(positions1[posIndex1 - 1], positions1[posIndex1]);
-    return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
-  })();
+  const arrow1 =
+    posIndex1 === 0
+      ? []
+      : (() => {
+          const move = findMove(
+            positions1[posIndex1 - 1],
+            positions1[posIndex1]
+          );
+          return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
+        })();
 
-  const arrow2 = posIndex2 === 0 ? [] : (() => {
-    const move = findPawnMove(positions2[posIndex2 - 1], positions2[posIndex2]);
-    return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
-  })();
+  const arrow2 =
+    posIndex2 === 0
+      ? []
+      : (() => {
+          const move = findMove(
+            positions2[posIndex2 - 1],
+            positions2[posIndex2]
+          );
+          return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
+        })();
 
-  const arrow3 = posIndex3 === 0 ? [] : (() => {
-    const move = findPawnMove(positions3[posIndex3 - 1], positions3[posIndex3]);
-    return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
-  })();
+  const arrow3 =
+    posIndex3 === 0
+      ? []
+      : (() => {
+          const move = findMove(
+            positions3[posIndex3 - 1],
+            positions3[posIndex3]
+          );
+          return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
+        })();
 
-  const arrow4 = posIndex4 === 0 ? [] : (() => {
-    const move = findPawnMove(positions4[posIndex4 - 1], positions4[posIndex4]);
-    return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
-  })();
+  const arrow4 =
+    posIndex4 === 0
+      ? []
+      : (() => {
+          const move = findMove(
+            positions4[posIndex4 - 1],
+            positions4[posIndex4]
+          );
+          return move ? [[...move, "rgba(255, 0, 0, 0.5)"]] : [];
+        })();
 
- return (
-  <div className="w-full max-w-screen-xl mx-auto p-6">
-    <p
-      className="text-3xl text-center font-semibold mb-6"
-      style={{ color: "rgba(133, 114, 81, 1)" }}
-    >
-      Pawn
-    </p>
-    <div className="flex flex-wrap justify-center items-start gap-6">
-      {[
-        {
-          id: "Board3-1",
-          pos: positions1[posIndex1],
-          arrows: arrow1,
-          text: 'Pawn can only move forward <strong>one step</strong> each move.',
-        },
-        {
-          id: "Board3-2",
-          pos: positions2[posIndex2],
-          arrows: arrow2,
-          text: 'But the <strong>first time</strong> a pawn moves, it can also move forward <strong>two squares</strong>.',
-        },
-        {
-          id: "Board3-3",
-          pos: positions3[posIndex3],
-          arrows: arrow3,
-          text: 'Pawn captures <strong>sideways</strong> (left and right), and will continue to move on the new file it transferred to.',
-        },
-        {
-          id: "Board3-4",
-          pos: positions4[posIndex4],
-          arrows: arrow4,
-          text: 'Any piece in front of a pawn will <strong>prevent</strong> the pawn from moving further, unless the blocker moves away.',
-        },
-      ].map(({ id, pos, arrows, text }) => (
-        <div key={id} className="flex flex-col items-center w-[250px]">
-          <Chessboard
-            id={id}
-            boardWidth={250}
-            arePiecesDraggable={false}
-            position={pos}
-            customArrows={arrows}
-          />
-          <p
-            className="mt-4 text-center text-lg px-2"
-            dangerouslySetInnerHTML={{ __html: text }}
-          />
-        </div>
-      ))}
+  return (
+    <div className="w-full max-w-screen-xl mx-auto p-6">
+      <p
+        className="text-3xl text-center font-semibold mb-6"
+        style={{ color: "rgba(133, 114, 81, 1)" }}
+      >
+        Pawn
+      </p>
+      <div className="flex flex-wrap justify-center items-start gap-6">
+        {[
+          {
+            id: "Board3-1",
+            pos: positions1[posIndex1],
+            arrows: arrow1,
+            text: "Pawn can only move forward <strong>one step</strong> each move.",
+          },
+          {
+            id: "Board3-2",
+            pos: positions2[posIndex2],
+            arrows: arrow2,
+            text: "But the <strong>first time</strong> a pawn moves, it can also move forward <strong>two squares</strong>.",
+          },
+          {
+            id: "Board3-3",
+            pos: positions3[posIndex3],
+            arrows: arrow3,
+            text: "Pawn captures <strong>sideways</strong> (left and right), and will continue to move on the new file it transferred to.",
+          },
+          {
+            id: "Board3-4",
+            pos: positions4[posIndex4],
+            arrows: arrow4,
+            text: "Any piece in front of a pawn will <strong>prevent</strong> the pawn from moving further, unless the blocker moves away.",
+          },
+        ].map(({ id, pos, arrows, text }) => (
+          <div key={id} className="flex flex-col items-center w-[250px]">
+            <Chessboard
+              id={id}
+              boardWidth={250}
+              arePiecesDraggable={false}
+              position={pos}
+              customArrows={arrows}
+            />
+            <p
+              className="mt-4 text-center text-lg px-2"
+              dangerouslySetInnerHTML={{ __html: text }}
+            />
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-);
-
+  );
 };
 
 export default Board3;

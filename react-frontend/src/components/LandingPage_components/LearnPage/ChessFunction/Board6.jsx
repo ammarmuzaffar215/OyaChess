@@ -27,7 +27,7 @@ const indexToSquare = (row, col) => {
   return files[col] + (8 - row);
 };
 
-const findPawnMove = (fromFen, toFen) => {
+const findMove = (fromFen, toFen) => {
   const fromBoard = fenToBoardArray(fromFen);
   const toBoard = fenToBoardArray(toFen);
 
@@ -121,7 +121,7 @@ const Board6 = () => {
     posIndex1 === 0
       ? []
       : (() => {
-          const move = findPawnMove(
+          const move = findMove(
             positions1[posIndex1 - 1],
             positions1[posIndex1]
           );
@@ -132,7 +132,7 @@ const Board6 = () => {
     posIndex2 === 0
       ? []
       : (() => {
-          const move = findPawnMove(
+          const move = findMove(
             positions2[posIndex2 - 1],
             positions2[posIndex2]
           );
@@ -143,7 +143,7 @@ const Board6 = () => {
     posIndex3 === 0
       ? []
       : (() => {
-          const move = findPawnMove(
+          const move = findMove(
             positions3[posIndex3 - 1],
             positions3[posIndex3]
           );
@@ -152,23 +152,32 @@ const Board6 = () => {
 
   return (
     <div className="w-full max-w-screen-xl mx-auto p-6">
-      <p className="text-3xl text-center font-semibold mb-6" style={{ color: 'rgba(133, 114, 81, 1)' }}>
+      <p
+        className="text-3xl text-center font-semibold mb-6"
+        style={{ color: "rgba(133, 114, 81, 1)" }}
+      >
         Rook
       </p>
       <div className="flex flex-wrap justify-center items-start gap-6">
         {[
           {
-            id: "Board6-1", pos: positions1[posIndex1], arrows: arrow1,
+            id: "Board6-1",
+            pos: positions1[posIndex1],
+            arrows: arrow1,
             text: "Rook moves *straight* in a '+' pattern and can move backward.",
           },
           {
-            id: "Board6-2", pos: positions2[posIndex2], arrows: arrow2,
+            id: "Board6-2",
+            pos: positions2[posIndex2],
+            arrows: arrow2,
             text: "Rook *cannot jump* over other pieces.",
           },
           {
-            id: "Board6-3", pos: positions3[posIndex3], arrows: arrow3,
+            id: "Board6-3",
+            pos: positions3[posIndex3],
+            arrows: arrow3,
             text: "Rook captures the *same way* it moves.",
-          }
+          },
         ].map(({ id, pos, arrows, text }) => (
           <div key={id} className="flex flex-col items-center w-[250px]">
             <Chessboard
