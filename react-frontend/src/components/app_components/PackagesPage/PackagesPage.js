@@ -19,6 +19,7 @@ import PackagesSeederDialogComponent from "./PackagesSeederDialogComponent";
 import SortIcon from "../../../assets/media/Sort.png";
 import FilterIcon from "../../../assets/media/Filter.png";
 
+
 const PackagesPage = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -193,76 +194,60 @@ const PackagesPage = (props) => {
     });
   };
 
-  const onRowClick = ({ data }) => {
-    navigate(`/packages/${data._id}`);
-  };
+  const fetchPackages = () => {
+  setLoading(true);
+  client
+    .service("packages")
+    .find({
+      query: {
+        $limit: 10000,
+        $populate: [
+          { path: "createdBy", service: "users", select: ["name"] },
+          { path: "updatedBy", service: "users", select: ["name"] },
+        ],
+      },
+    })
+    .then((res) => {
+      setData(res.data || []);
+      setInitialData(res.data || []);
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("❌ Failed to fetch packages", error);
+      props.alert({
+        title: "Error",
+        type: "error",
+        message: error.message || "Failed to load packages",
+      });
+      setLoading(false);
+    });
+};
+
 
   const menuItems = [
-    {
-      label: "Copy link",
-      icon: "pi pi-copy",
-      command: () => copyPageLink(),
-    },
-    // {
-    //     label: "Share",
-    //     icon: "pi pi-share-alt",
-    //     command: () => setSearchDialog(true)
-    // },
-    {
-      label: "Import",
-      icon: "pi pi-upload",
-      command: () => setShowUpload(true),
-    },
-    {
-      label: "Export",
-      icon: "pi pi-download",
-      command: () => {
-        // Trigger the download by setting the triggerDownload state
-        data.length > 0
-          ? setTriggerDownload(true)
-          : props.alert({
-              title: "Export",
-              type: "warn",
-              message: "no data to export",
-            });
+  {
+    label: "Testing",
+    icon: "pi pi-check-circle",
+    items: [
+      {
+        label: "Faker",
+        icon: "pi pi-bullseye",
+        command: () => setShowFakerDialog(true),
       },
-    },
-    {
-      label: "Help",
-      icon: "pi pi-question-circle",
-      command: () => toggleHelpSidebar(),
-    },
-    { separator: true },
+      {
+        label: `Drop ${data?.length}`,
+        icon: "pi pi-trash",
+        command: () => setShowDeleteAllDialog(true),
+      },
+    ],
+  },
+  {
+    label: "Data seeder",
+    icon: "pi pi-database",
+    command: () => setShowSeederDialog(true),
+  },
+];
 
-    {
-      label: "Testing",
-      icon: "pi pi-check-circle",
-      items: [
-        {
-          label: "Faker",
-          icon: "pi pi-bullseye",
-          command: (e) => {
-            setShowFakerDialog(true);
-          },
-          show: true,
-        },
-        {
-          label: `Drop ${data?.length}`,
-          icon: "pi pi-trash",
-          command: (e) => {
-            setShowDeleteAllDialog(true);
-          },
-        },
-      ],
-    },
-    {
-      label: "Data seeder",
-      icon: "pi pi-database",
-      command: (e) => {
-        setShowSeederDialog(true);
-      },
-    },
-  ];
 
   const onMenuSort = (sortOption) => {
     let sortedData;
@@ -353,7 +338,7 @@ const PackagesPage = (props) => {
       <div className="grid">
         <div className="col-6 flex align-items-center justify-content-start">
           <h4 className="mb-0 ml-2">
-            <span> My App / </span>
+            <span> OyaChess / </span>
             <strong>Packages </strong>
           </h4>
           <SplitButton
@@ -415,7 +400,6 @@ const PackagesPage = (props) => {
             fields={fields}
             onRowDelete={onRowDelete}
             onEditRow={onEditRow}
-            onRowClick={onRowClick}
             searchDialog={searchDialog}
             setSearchDialog={setSearchDialog}
             showUpload={showUpload}
@@ -435,6 +419,7 @@ const PackagesPage = (props) => {
             selectedDelete={selectedDelete}
             setSelectedDelete={setSelectedDelete}
             onCreateResult={onCreateResult}
+            fetchPackages={fetchPackages}
           />
         </div>
       </div>

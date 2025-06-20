@@ -19,6 +19,7 @@ import "prismjs/themes/prism-coy.css";
 import "./assets/layout/layout.scss";
 import "./assets/mainTheme/mainTheme.css";
 import "./css/customStyles.css";
+import { PrimeReactProvider } from "primereact/api";
 
 const App = () => {
   const location = useLocation();
@@ -32,26 +33,28 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      {useLayout && <AppTopbar showSideMenuButton={false} />}
+      <PrimeReactProvider>
+        {useLayout && <AppTopbar showSideMenuButton={false} />}
 
-      {useLayout ? (
-        <MainLayout>
+        {useLayout ? (
+          <MainLayout>
+            <MyRouter />
+          </MainLayout>
+        ) : (
           <MyRouter />
-        </MainLayout>
-      ) : (
-        <MyRouter />
-      )}
+        )}
 
-      <LoadingWrapper />
-      <ToastWrapper />
-      <StartupWrapper />
+        <LoadingWrapper />
+        <ToastWrapper />
+        <StartupWrapper />
 
-      <AppConfigStatic
-        rippleEffect={true}
-        inputStyle={"outlined"}
-        layoutMode={"static"}
-        layoutColorMode={"light"}
-      />
+        <AppConfigStatic
+          rippleEffect={true}
+          inputStyle={"outlined"}
+          layoutMode={"static"}
+          layoutColorMode={"light"}
+        />
+      </PrimeReactProvider>
     </Provider>
   );
 };

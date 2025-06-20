@@ -4,19 +4,12 @@ import React, { useState, useRef, useEffect } from "react";
 import _ from "lodash";
 import { Button } from "primereact/button";
 import { InputNumber } from "primereact/inputnumber";
+import { Checkbox } from "primereact/checkbox";
 import { useParams } from "react-router-dom";
-import moment from "moment";
 import UploadService from "../../../services/UploadService";
-import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { MultiSelect } from "primereact/multiselect";
-import DownloadCSV from "../../../utils/DownloadCSV";
-import InboxCreateDialogComponent from "../../cb_components/InboxPage/InboxCreateDialogComponent";
-import InviteIcon from "../../../assets/media/Invite.png";
-import ExportIcon from "../../../assets/media/Export & Share.png";
-import CopyIcon from "../../../assets/media/Clipboard.png";
-import DuplicateIcon from "../../../assets/media/Duplicate.png";
-import DeleteIcon from "../../../assets/media/Trash.png";
+import client from "../../../services/restClient";
 
 const ItemsDataTable = ({
   items,
@@ -43,45 +36,42 @@ const ItemsDataTable = ({
   selectedDelete,
   setSelectedDelete,
   onCreateResult,
+  fetchItems,
 }) => {
   const dt = useRef(null);
   const urlParams = useParams();
-  const [globalFilter, setGlobalFilter] = useState("");
   const [selectedItems, setSelectedItems] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
-  const [data, setData] = useState([]);
 
-  const pTemplate0 = (rowData, { rowIndex }) => <p>{rowData.title}</p>;
-  const pTemplate1 = (rowData, { rowIndex }) => <p>{rowData.type}</p>;
-  const p_numberTemplate2 = (rowData, { rowIndex }) => <p>{rowData.qty}</p>;
-  const currencyTemplate3 = (rowData, { rowIndex }) => (
-    <InputNumber
-      value={rowData.price}
-      mode="currency"
-      currency="MYR"
-      locale="en-US"
-      disabled={true}
-      useGrouping={false}
+  const checkboxTemplate = (rowData) => (
+    <Checkbox
+      checked={selectedItems.some((item) => item._id === rowData._id)}
+      onChange={(e) => {
+        let _selectedItems = [...selectedItems];
+        if (e.checked) {
+          _selectedItems.push(rowData);
+        } else {
+          _selectedItems = _selectedItems.filter(
+            (item) => item._id !== rowData._id
+          );
+        }
+        setSelectedItems(_selectedItems);
+      }}
     />
   );
-  const currencyTemplate4 = (rowData, { rowIndex }) => (
-    <InputNumber
-      value={rowData.discount}
-      mode="currency"
-      currency="MYR"
-      locale="en-US"
-      disabled={true}
-      useGrouping={false}
-    />
-  );
-  const editTemplate = (rowData, { rowIndex }) => (
-    <Button
-      onClick={() => onEditRow(rowData, rowIndex)}
-      icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`}
-      className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`}
-    />
-  );
-  const deleteTemplate = (rowData, { rowIndex }) => (
+
+  const imageTemplate = (rowData) =>
+    rowData.imageUrl ? (
+      <img
+        src={rowData.imageUrl}
+        alt="Item"
+        style={{ width: "50px", height: "auto", borderRadius: "4px" }}
+      />
+    ) : (
+      <span style={{ color: "#ccc", fontStyle: "italic" }}>No image</span>
+    );
+
+  const deleteTemplate = (rowData) => (
     <Button
       onClick={() => onRowDelete(rowData._id)}
       icon="pi pi-times"
@@ -89,55 +79,47 @@ const ItemsDataTable = ({
     />
   );
 
-  const checkboxTemplate = (rowData) => (
-    <Checkbox
-      checked={selectedItems.some((item) => item._id === rowData._id)}
-      onChange={(e) => {
-        let _selectedItems = [...selectedItems];
-
-        if (e.checked) {
-          _selectedItems.push(rowData);
-        } else {
-          _selectedItems = _selectedItems.filter(
-            (item) => item._id !== rowData._id,
-          );
-        }
-        setSelectedItems(_selectedItems);
-      }}
+  const editTemplate = (rowData) => (
+    <Button
+      onClick={() => onEditRow(rowData)}
+      icon={`pi ${rowData.isEdit ? "pi-check" : "pi-pencil"}`}
+      className={`p-button-rounded p-button-text ${rowData.isEdit ? "p-button-success" : "p-button-warning"}`}
     />
   );
-  const deselectAllRows = () => {
-    // Logic to deselect all selected rows
-    setSelectedItems([]); // Assuming setSelectedItems is used to manage selected items state
-  };
 
   const handleDelete = async () => {
     if (!selectedItems || selectedItems.length === 0) return;
-
     try {
-      const promises = selectedItems.map((item) =>
-        client.service("companies").remove(item._id),
+      await Promise.all(
+        selectedItems.map(async (item) => {
+          try {
+            await client.service("items").remove(item._id);
+          } catch (error) {
+            if (error.name === "NotFound") {
+              console.warn(`Items ${item._id} already deleted.`);
+            } else {
+              throw error;
+            }
+          }
+        })
       );
-      await Promise.all(promises);
-      const updatedData = data.filter(
-        (item) => !selectedItems.find((selected) => selected._id === item._id),
-      );
-      setData(updatedData);
-      setSelectedDelete(selectedItems.map((item) => item._id));
-
-      deselectAllRows();
+      fetchItems?.();
+      setSelectedItems([]);
+      setSelectedDelete([]);
     } catch (error) {
       console.error("Failed to delete selected records", error);
     }
   };
 
   const handleMessage = () => {
-    setShowDialog(true); // Open the dialog
+    setShowDialog(true);
   };
 
   const handleHideDialog = () => {
-    setShowDialog(false); // Close the dialog
+    setShowDialog(false);
   };
+
+  const deselectAllRows = () => setSelectedItems([]);
 
   return (
     <>
@@ -152,7 +134,7 @@ const ItemsDataTable = ({
         paginator
         rows={10}
         rowsPerPageOptions={[10, 50, 250, 500]}
-        size={"small"}
+        size="small"
         paginatorTemplate="RowsPerPageDropdown FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink"
         currentPageReportTemplate="{first} to {last} of {totalRecords}"
         rowClassName="cursor-pointer"
@@ -167,50 +149,88 @@ const ItemsDataTable = ({
           body={checkboxTemplate}
         />
         <Column
+          field="imageUrl"
+          header="Image"
+          body={imageTemplate}
+          style={{ minWidth: "6rem" }}
+        />
+        <Column
           field="title"
           header="Title"
-          body={pTemplate0}
-          filter={selectedFilterFields.includes("title")}
-          hidden={selectedHideFields?.includes("title")}
           sortable
           style={{ minWidth: "8rem" }}
         />
         <Column
           field="type"
           header="Type"
-          body={pTemplate1}
-          filter={selectedFilterFields.includes("type")}
-          hidden={selectedHideFields?.includes("type")}
           sortable
           style={{ minWidth: "8rem" }}
+        />
+        <Column
+          field="description"
+          header="Description"
+          sortable
+          style={{ minWidth: "12rem", maxWidth: "20rem", whiteSpace: "normal" }}
         />
         <Column
           field="qty"
           header="Qty"
-          body={p_numberTemplate2}
-          filter={selectedFilterFields.includes("qty")}
-          hidden={selectedHideFields?.includes("qty")}
           sortable
-          style={{ minWidth: "8rem" }}
+          style={{ minWidth: "6rem", maxWidth: "8rem" }}
         />
         <Column
           field="price"
           header="Price"
-          body={currencyTemplate3}
-          filter={selectedFilterFields.includes("price")}
-          hidden={selectedHideFields?.includes("price")}
+          body={(rowData) => (
+            <InputNumber
+              value={rowData.price}
+              mode="currency"
+              currency="MYR"
+              locale="en-US"
+              disabled
+              useGrouping={false}
+            />
+          )}
           sortable
-          style={{ minWidth: "8rem" }}
+          style={{ minWidth: "6rem" }}
         />
         <Column
           field="discount"
           header="Discount"
-          body={currencyTemplate4}
-          filter={selectedFilterFields.includes("discount")}
-          hidden={selectedHideFields?.includes("discount")}
+          body={(rowData) => (
+            <InputNumber
+              value={rowData.discount}
+              mode="currency"
+              currency="MYR"
+              locale="en-US"
+              disabled
+              useGrouping={false}
+            />
+          )}
           sortable
-          style={{ minWidth: "8rem" }}
+          style={{ minWidth: "6rem" }}
         />
+        <Column
+          field="productLink"
+          header="Product Link"
+          body={(rowData) =>
+            rowData.productLink ? (
+              <a
+                href={rowData.productLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pi pi-link"
+                title="Open link"
+                style={{ fontSize: "1.2rem", color: "#007ad9" }}
+              ></a>
+            ) : (
+              <span style={{ color: "#999" }}>N/A</span>
+            )
+          }
+          sortable
+          style={{ minWidth: "6rem", textAlign: "center" }}
+        />
+
         <Column header="Edit" body={editTemplate} />
         <Column header="Delete" body={deleteTemplate} />
       </DataTable>
@@ -255,131 +275,15 @@ const ItemsDataTable = ({
 
           {/* New buttons section */}
           <div style={{ display: "flex", alignItems: "center" }}>
-            {/* Copy button */}
-            <Button
-              label="Copy"
-              labelposition="right"
-              icon={
-                <img
-                  src={CopyIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Copy"
-              // onClick={handleCopy}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Duplicate button */}
-            <Button
-              label="Duplicate"
-              labelposition="right"
-              icon={
-                <img
-                  src={DuplicateIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Duplicate"
-              // onClick={handleDuplicate}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Export button */}
-            <Button
-              label="Export"
-              labelposition="right"
-              icon={
-                <img
-                  src={ExportIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Export"
-              // onClick={handleExport}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Message button */}
-            <Button
-              label="Message"
-              labelposition="right"
-              icon={
-                <img
-                  src={InviteIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              onClick={handleMessage}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* InboxCreateDialogComponent */}
-            <InboxCreateDialogComponent
-              show={showDialog}
-              onHide={handleHideDialog}
-              serviceInbox="companies"
-              onCreateResult={onCreateResult}
-              // selectedItemsId={selectedItems.map(item => item._id)}
-              selectedItemsId={selectedItems}
-            />
-
-            {/* <div style={{ display: 'flex', alignItems: 'center' }}> */}
             <Button
               label="Delete"
               labelposition="right"
-              icon={
-                <img
-                  src={DeleteIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
+              icon="pi pi-trash"
               onClick={handleDelete}
               style={{
                 backgroundColor: "white",
                 color: "#2A4454",
                 border: "1px solid transparent",
-                transition: "border-color 0.3s",
                 fontSize: "14px",
                 fontFamily: "Arial, sans-serif",
                 gap: "4px",

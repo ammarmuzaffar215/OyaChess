@@ -5,10 +5,11 @@
         const { Schema } = mongooseClient;
         const schema = new Schema(
           {
-            userId: { type: Schema.Types.ObjectId },
+userId: { type: Schema.Types.ObjectId, ref: "users" },
+whiteName: { type: String, required: true },
 opponentName: { type:  String , required: true },
 openingName: { type:  String , required: true },
-notation: { type:  String , maxLength: 150, index: true, trim: true },
+notation: { type:  String , index: true, trim: true },
 date: { type: Date, required: false },
 
             

@@ -123,14 +123,14 @@ const MyRouter = (props) => {
             <Route path="/learn" exact element={<LearnPage />} /> 
             <Route path="/coaching" exact element={<CoachingPage />} /> 
             <Route path="/shop" exact element={<ShopPage />} /> 
-            <Route path="/login" exact element={props.isLoggedIn === true ? <DashboardAdminControl /> : <LoginPage />} />
+            <Route path="/login" exact element={props.isLoggedIn === true ? <Dashboard /> : <LoginPage />} />
             <Route path="/reset/:singleChangeForgotPasswordId" exact element={<ResetPage />} />
             <Route path="/signup" exact element={<SignUpPage />} />
             <Route path="/maintenance" exact element={<MaintenancePage />} />
             <Route path="/login-faq" exact element={<LoginFaqPage />} />
 
             <Route element={<ProtectedRoute redirectPath={'/login'} />}>
-            <Route path="/project" exact element={<DashboardAdminControl />} />
+            <Route path="/project" exact element={<Dashboard />} />
                 // user details
                 <Route path="/account" exact element={<Account />} />
                 <Route path="/users/:singleUsersId" exact element={<SingleUsersPage />} />
@@ -139,11 +139,9 @@ const MyRouter = (props) => {
                 // myapp
 <Route path="/gamelogs/:singleGamelogsId" exact element={<SingleGamelogsPage />} />
 <Route path="/gamelogs" exact element={<GamelogProjectLayoutPage />} />
-<Route path="/packages/:singlePackagesId" exact element={<SinglePackagesPage />} />
 <Route path="/packages" exact element={<PackageProjectLayoutPage />} />
 <Route path="/enrollments/:singleEnrollmentsId" exact element={<SingleEnrollmentsPage />} />
 <Route path="/enrollments" exact element={<EnrollmentProjectLayoutPage />} />
-<Route path="/materials/:singleMaterialsId" exact element={<SingleMaterialsPage />} />
 <Route path="/materials" exact element={<MaterialProjectLayoutPage />} />
 <Route path="/items/:singleItemsId" exact element={<SingleItemsPage />} />
 <Route path="/items" exact element={<ItemProjectLayoutPage />} />
@@ -153,10 +151,12 @@ const MyRouter = (props) => {
 <Route path="/purchases" exact element={<PurchaseProjectLayoutPage />} />
 <Route path="/puzzles/:singlePuzzlesId" exact element={<SinglePuzzlesPage />} />
 <Route path="/puzzles" exact element={<PuzzleProjectLayoutPage />} />
+{/* <Route path="/studentenrollments/" exact element={<StudentEnrollments />} /> */}
+
                 {/* ~cb-add-protected-route~ */}
 
                 // dashboards
-                <Route path="/dashboard" exact element={<Dashboard />} />
+                <Route path="/Dashboard" exact element={<Dashboard />} />
                 <Route path="/DashboardAdminControl" exact element={<DashboardAdminControl />} />
                 <Route path="/DashboardCompanyData" exact element={<DashboardCompanyData />} />
                 <Route path="/DashboardDataManagement" exact element={<DashboardDataManagement />} />

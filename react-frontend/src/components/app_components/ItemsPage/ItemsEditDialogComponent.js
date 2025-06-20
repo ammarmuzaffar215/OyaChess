@@ -9,6 +9,7 @@ import { Tag } from "primereact/tag";
 import moment from "moment";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const getSchemaValidationErrorsStrings = (errorObj) => {
   let errMsg = {};
@@ -28,6 +29,7 @@ const ItemsCreateDialogComponent = (props) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const urlParams = useParams();
+  const fileInputRef = React.useRef(null);
 
   useEffect(() => {
     set_entity(props.entity);
@@ -40,6 +42,9 @@ const ItemsCreateDialogComponent = (props) => {
       qty: _entity?.qty,
       price: _entity?.price,
       discount: _entity?.discount,
+      imageUrl: _entity?.imageUrl,
+      description: _entity?.description,
+      productLink: _entity?.productLink,
     };
 
     setLoading(true);
@@ -55,7 +60,7 @@ const ItemsCreateDialogComponent = (props) => {
     } catch (error) {
       console.log("error", error);
       setError(
-        getSchemaValidationErrorsStrings(error) || "Failed to update info",
+        getSchemaValidationErrorsStrings(error) || "Failed to update info"
       );
       props.alert({
         type: "error",
@@ -86,6 +91,53 @@ const ItemsCreateDialogComponent = (props) => {
     let new_entity = { ..._entity, [key]: val };
     set_entity(new_entity);
     setError({});
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!["image/png", "image/jpeg"].includes(file.type)) {
+      props.alert({
+        type: "error",
+        title: "Upload Failed",
+        message: "Only PNG or JPG files are allowed.",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "oyachess_unsigned");
+    formData.append("folder", "oyachess/items");
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dwfqzyxsy/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await res.json();
+      if (data?.secure_url) {
+        set_entity((prev) => ({ ...prev, imageUrl: data.secure_url }));
+      } else {
+        props.alert({
+          type: "error",
+          title: "Upload Failed",
+          message: "Upload succeeded but no image URL was returned.",
+        });
+      }
+    } catch (err) {
+      console.error("Upload error", err);
+      props.alert({
+        type: "error",
+        title: "Upload Failed",
+        message: "Something went wrong uploading the image.",
+      });
+    }
   };
 
   return (
@@ -139,6 +191,41 @@ const ItemsCreateDialogComponent = (props) => {
             {!_.isEmpty(error["type"]) && (
               <p className="m-0" key="error-type">
                 {error["type"]}
+              </p>
+            )}
+          </small>
+        </div>
+        <div className="col-12 field">
+          <label htmlFor="description">Description:</label>
+          <InputTextarea
+            id="description"
+            className="w-full mb-3"
+            autoResize
+            rows={3}
+            value={_entity?.description}
+            onChange={(e) => setValByKey("description", e.target.value)}
+          />
+          <small className="p-error">
+            {!_.isEmpty(error["description"]) && (
+              <p className="m-0" key="error-description">
+                {error["description"]}
+              </p>
+            )}
+          </small>
+        </div>
+        <div className="col-12 field">
+          <label htmlFor="productLink">Product Link:</label>
+          <InputText
+            id="productLink"
+            className="w-full mb-3"
+            value={_entity?.productLink}
+            onChange={(e) => setValByKey("productLink", e.target.value)}
+            placeholder="https://example.com/product"
+          />
+          <small className="p-error">
+            {!_.isEmpty(error["productLink"]) && (
+              <p className="m-0" key="error-productLink">
+                {error["productLink"]}
               </p>
             )}
           </small>
@@ -204,6 +291,21 @@ const ItemsCreateDialogComponent = (props) => {
                 {error["discount"]}
               </p>
             )}
+          </small>
+        </div>
+        <div className="col-12 md:col-6 field">
+          <label htmlFor="imageFile">Image (PNG or JPG):</label>
+          <input
+            type="file"
+            accept="image/png, image/jpeg"
+            onChange={handleImageUpload}
+            ref={fileInputRef}
+            className="w-full mb-2"
+          />
+          <small className="text-sm text-muted">
+            {_entity?.imageUrl
+              ? `Current image: ${_entity.imageUrl.split("/").pop().split("?")[0]}`
+              : "No image uploaded yet."}
           </small>
         </div>
         <div className="col-12">&nbsp;</div>

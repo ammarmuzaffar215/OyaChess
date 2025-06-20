@@ -2,9 +2,18 @@ import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "primereact/button";
 
+// Simulating a user auth context or state
+// Replace this logic with real auth data from context, Redux, or props
+const getCurrentUser = () => {
+  const user = JSON.parse(localStorage.getItem("user")); // Assume { username: "JohnDoe" }
+  return user;
+};
+
 const PublicNavbar = () => {
   const navigate = useNavigate();
   const label = process.env.REACT_APP_PROJECT_LABEL || "My App";
+
+  const user = getCurrentUser(); // Simulate fetching logged-in user
 
   return (
     <div
@@ -47,13 +56,19 @@ const PublicNavbar = () => {
         <button onClick={() => navigate("/learn")} style={navBtnStyle}>Learn</button>
         <button onClick={() => navigate("/shop")} style={navBtnStyle}>Shop</button>
         <button onClick={() => navigate("/coaching")} style={navBtnStyle}>Coaching</button>
-        
-        {/* Login Button using PrimeReact */}
-        <Button
-          label="Login"
-          className="p-button-rounded p-button-text"
-          onClick={() => navigate("/login")}
-        />
+
+        {/* User Login/Username */}
+        {user ? (
+          <span style={{ fontWeight: "bold", color: "#2A4454" }}>
+            {user.username}
+          </span>
+        ) : (
+          <Button
+            label="Login"
+            className="p-button-rounded p-button-text"
+            onClick={() => navigate("/login")}
+          />
+        )}
       </div>
     </div>
   );

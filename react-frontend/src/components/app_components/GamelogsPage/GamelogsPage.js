@@ -19,6 +19,30 @@ import GamelogsSeederDialogComponent from "./GamelogsSeederDialogComponent";
 import SortIcon from "../../../assets/media/Sort.png";
 import FilterIcon from "../../../assets/media/Filter.png";
 
+const stripPgnMovesOnly = (pgn) => {
+  // Remove all PGN headers like [Event "..."]
+  let movesOnly = pgn.replace(/\[.*?\]\s*/g, "");
+  // Remove clock annotations like { [%clk ...] }
+  movesOnly = movesOnly.replace(/\{[^}]*\}/g, "");
+  // Collapse multiple spaces and trim
+  return movesOnly.replace(/\s+/g, " ").trim();
+};
+
+const extractPgnData = (pgn) => {
+  const getTag = (tag) => {
+    const match = pgn.match(new RegExp(`\\[${tag} "(.*?)"\\]`));
+    return match ? match[1] : "";
+  };
+
+  return {
+    whiteName: getTag("White") || "Unknown",
+    opponentName: getTag("Black") || "Unknown",
+    openingName: getTag("Opening") || "Unknown",
+    date: getTag("Date") ? new Date(getTag("Date")) : null,
+    notation: pgn,
+  };
+};
+
 const GamelogsPage = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -186,8 +210,8 @@ const GamelogsPage = (props) => {
           setLoading(false);
           props.hide();
           console.log({ error });
-        }),
-      ),
+        })
+      )
     );
     props.hide();
     setLoading(false);
@@ -205,68 +229,25 @@ const GamelogsPage = (props) => {
 
   const menuItems = [
     {
-      label: "Copy link",
-      icon: "pi pi-copy",
-      command: () => copyPageLink(),
-    },
-    // {
-    //     label: "Share",
-    //     icon: "pi pi-share-alt",
-    //     command: () => setSearchDialog(true)
-    // },
-    {
-      label: "Import",
-      icon: "pi pi-upload",
-      command: () => setShowUpload(true),
-    },
-    {
-      label: "Export",
-      icon: "pi pi-download",
-      command: () => {
-        // Trigger the download by setting the triggerDownload state
-        data.length > 0
-          ? setTriggerDownload(true)
-          : props.alert({
-              title: "Export",
-              type: "warn",
-              message: "no data to export",
-            });
-      },
-    },
-    {
-      label: "Help",
-      icon: "pi pi-question-circle",
-      command: () => toggleHelpSidebar(),
-    },
-    { separator: true },
-
-    {
       label: "Testing",
       icon: "pi pi-check-circle",
       items: [
         {
           label: "Faker",
           icon: "pi pi-bullseye",
-          command: (e) => {
-            setShowFakerDialog(true);
-          },
-          show: true,
+          command: () => setShowFakerDialog(true),
         },
         {
           label: `Drop ${data?.length}`,
           icon: "pi pi-trash",
-          command: (e) => {
-            setShowDeleteAllDialog(true);
-          },
+          command: () => setShowDeleteAllDialog(true),
         },
       ],
     },
     {
       label: "Data seeder",
       icon: "pi pi-database",
-      command: (e) => {
-        setShowSeederDialog(true);
-      },
+      command: () => setShowSeederDialog(true),
     },
   ];
 
@@ -354,17 +335,96 @@ const GamelogsPage = (props) => {
     },
   ];
 
+  const [pgnFile, setPgnFile] = useState(null);
+
+  const handlePgnUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file && file.name.endsWith(".pgn")) {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const content = e.target.result;
+        const { whiteName, opponentName, openingName, date } =
+          extractPgnData(content);
+        const notation = stripPgnMovesOnly(content);
+
+        const payload = {
+          whiteName,
+          opponentName,
+          openingName,
+          date,
+          notation,
+          userId: props.user?._id,
+          createdBy: props.user?._id,
+          updatedBy: props.user?._id,
+        };
+
+        try {
+          const newEntry = await client.service("gamelogs").create(payload);
+          setData((prev) => [...prev, newEntry]);
+          props.alert({
+            title: "PGN Upload",
+            type: "success",
+            message: "Game uploaded successfully.",
+          });
+        } catch (error) {
+          console.error("❌ Upload failed:", error);
+          props.alert({
+            title: "Upload Error",
+            type: "error",
+            message: error.message || "Upload failed.",
+          });
+        }
+      };
+      reader.readAsText(file);
+    } else {
+      props.alert({
+        title: "PGN Upload",
+        type: "warn",
+        message: "Please upload a valid .pgn file.",
+      });
+    }
+  };
+
+  const fetchGamelogs = () => {
+    setLoading(true);
+    client
+      .service("gamelogs")
+      .find({
+        query: {
+          $limit: 10000,
+          $populate: [
+            { path: "createdBy", service: "users", select: ["name"] },
+            { path: "updatedBy", service: "users", select: ["name"] },
+          ],
+        },
+      })
+      .then((res) => {
+        setData(res.data || []);
+        setInitialData(res.data || []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("❌ Failed to fetch gamelogs", error);
+        props.alert({
+          title: "Error",
+          type: "error",
+          message: error.message || "Failed to load gamelogs",
+        });
+        setLoading(false);
+      });
+  };
+
   return (
     <div className="mt-5">
       <div className="grid">
         <div className="col-6 flex align-items-center justify-content-start">
           <h4 className="mb-0 ml-2">
-            <span> My App / </span>
-            <strong>Gamelogs </strong>
+            <span> OyaChess / </span>
+            <strong> Gamelogs </strong>
           </h4>
           <SplitButton
             model={menuItems.filter(
-              (m) => !(m.icon === "pi pi-trash" && items?.length === 0),
+              (m) => !(m.icon === "pi pi-trash" && items?.length === 0)
             )}
             dropdownIcon="pi pi-ellipsis-h"
             buttonClassName="hidden"
@@ -376,7 +436,7 @@ const GamelogsPage = (props) => {
             {" "}
             <SplitButton
               model={filterMenuItems.filter(
-                (m) => !(m.icon === "pi pi-trash" && data?.length === 0),
+                (m) => !(m.icon === "pi pi-trash" && data?.length === 0)
               )}
               dropdownIcon={
                 <img
@@ -390,7 +450,7 @@ const GamelogsPage = (props) => {
             ></SplitButton>
             <SplitButton
               model={sortMenuItems.filter(
-                (m) => !(m.icon === "pi pi-trash" && data?.length === 0),
+                (m) => !(m.icon === "pi pi-trash" && data?.length === 0)
               )}
               dropdownIcon={
                 <img
@@ -416,12 +476,22 @@ const GamelogsPage = (props) => {
       </div>
       <div className="grid align-items-center">
         <div className="col-11" role="gamelogs-datatable">
+          <br></br>
+          <div className="mb-4 ml-5">
+            <label className="block font-bold mb-2">Upload PGN File</label>
+            <input
+              type="file"
+              accept=".pgn"
+              onChange={handlePgnUpload}
+              className="border border-gray-300 rounded px-3 py-2"
+            />
+          </div>
+
           <GamelogsDatatable
             items={data}
             fields={fields}
             onRowDelete={onRowDelete}
             onEditRow={onEditRow}
-            onRowClick={onRowClick}
             searchDialog={searchDialog}
             setSearchDialog={setSearchDialog}
             showUpload={showUpload}
@@ -441,6 +511,8 @@ const GamelogsPage = (props) => {
             selectedDelete={selectedDelete}
             setSelectedDelete={setSelectedDelete}
             onCreateResult={onCreateResult}
+            onRowClick={onRowClick}
+            fetchGamelogs={fetchGamelogs}
           />
         </div>
       </div>
@@ -490,7 +562,7 @@ const GamelogsPage = (props) => {
         id="rightsidebar"
         className={classNames(
           "overlay-auto z-1 surface-overlay shadow-2 absolute right-0 w-20rem animation-duration-150 animation-ease-in-out",
-          { hidden: !isHelpSidebarVisible, block: isHelpSidebarVisible },
+          { hidden: !isHelpSidebarVisible, block: isHelpSidebarVisible }
         )}
         style={{ top: "60px", height: "calc(100% - 60px)" }}
       >

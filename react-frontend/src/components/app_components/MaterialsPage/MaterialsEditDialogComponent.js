@@ -5,11 +5,9 @@ import client from "../../../services/restClient";
 import _ from "lodash";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
-import { Tag } from "primereact/tag";
-import moment from "moment";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
-import UploadFilesToS3 from "../../../services/UploadFilesToS3";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const getSchemaValidationErrorsStrings = (errorObj) => {
   let errMsg = {};
@@ -17,26 +15,26 @@ const getSchemaValidationErrorsStrings = (errorObj) => {
     if (Object.hasOwnProperty.call(errorObj.errors, key)) {
       const element = errorObj.errors[key];
       if (element?.message) {
-        errMsg.push(element.message);
+        errMsg[key] = element.message;
       }
     }
   }
-  return errMsg.length ? errMsg : errorObj.message ? errorObj.message : null;
+  return Object.keys(errMsg).length ? errMsg : errorObj.message || null;
 };
 
-const MaterialsCreateDialogComponent = (props) => {
+const MaterialsEditDialogComponent = (props) => {
   const [_entity, set_entity] = useState({});
-  const [error, setError] = useState("");
+  const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
   const urlParams = useParams();
   const [packageId, setPackageId] = useState([]);
 
   useEffect(() => {
     set_entity(props.entity);
+    setError({});
   }, [props.entity, props.show]);
 
   useEffect(() => {
-    //on mount packages
     client
       .service("packages")
       .find({
@@ -48,32 +46,86 @@ const MaterialsCreateDialogComponent = (props) => {
       })
       .then((res) => {
         setPackageId(
-          res.data.map((e) => {
-            return { name: e["title"], value: e._id };
-          }),
+          res.data.map((e) => ({ name: e["title"], value: e._id }))
         );
       })
       .catch((error) => {
-        console.log({ error });
         props.alert({
           title: "Packages",
           type: "error",
-          message: error.message || "Failed get packages",
+          message: error.message || "Failed to get packages",
         });
       });
   }, []);
 
+  const setValByKey = (key, val) => {
+    set_entity({ ..._entity, [key]: val });
+    setError({});
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (
+      !file ||
+      ![
+        "application/pdf",
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ].includes(file.type)
+    ) {
+      props.alert({
+        title: "Upload Error",
+        type: "warn",
+        message: "Only PDF and PPTX files are allowed.",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "oyachess_unsigned");
+    formData.append("folder", "oyachess/items");
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dwfqzyxsy/raw/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await res.json();
+      if (data?.secure_url) {
+        setValByKey("files", data.secure_url);
+        props.alert({
+          title: "Upload Success",
+          type: "success",
+          message: `${file.name} uploaded.`,
+        });
+      } else {
+        throw new Error("Upload failed");
+      }
+    } catch (err) {
+      console.error("Cloudinary Upload Error:", err);
+      props.alert({
+        title: "Upload Error",
+        type: "error",
+        message: "Failed to upload file.",
+      });
+    }
+  };
+
   const onSave = async () => {
-    let _data = {
+    const payload = {
       title: _entity?.title,
+      description: _entity?.description,
       packageId: _entity?.packageId?._id,
       videoUrl: _entity?.videoUrl,
-      materials: _entity?.materials,
+      files: _entity?.files,
     };
 
     setLoading(true);
     try {
-      await client.service("materials").patch(_entity._id, _data);
+      await client.service("materials").patch(_entity._id, payload);
       const eagerResult = await client.service("materials").find({
         query: {
           $limit: 10000,
@@ -90,19 +142,19 @@ const MaterialsCreateDialogComponent = (props) => {
       props.onHide();
       props.alert({
         type: "success",
-        title: "Edit info",
-        message: "Info materials updated successfully",
+        title: "Edit Material",
+        message: "Material updated successfully",
       });
       props.onEditResult(eagerResult.data[0]);
     } catch (error) {
-      console.log("error", error);
+      console.error("Error updating material:", error);
       setError(
-        getSchemaValidationErrorsStrings(error) || "Failed to update info",
+        getSchemaValidationErrorsStrings(error) || "Failed to update material"
       );
       props.alert({
         type: "error",
-        title: "Edit info",
-        message: "Failed to update info",
+        title: "Edit Material",
+        message: "Failed to update material",
       });
     }
     setLoading(false);
@@ -123,12 +175,6 @@ const MaterialsCreateDialogComponent = (props) => {
       />
     </div>
   );
-
-  const setValByKey = (key, val) => {
-    let new_entity = { ..._entity, [key]: val };
-    set_entity(new_entity);
-    setError({});
-  };
 
   const packageIdOptions = packageId.map((elem) => ({
     name: elem.name,
@@ -152,93 +198,89 @@ const MaterialsCreateDialogComponent = (props) => {
         style={{ maxWidth: "55vw" }}
         role="materials-edit-dialog-component"
       >
+        {/* Title */}
         <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="title">Title:</label>
-            <InputText
-              id="title"
-              className="w-full mb-3 p-inputtext-sm"
-              value={_entity?.title}
-              onChange={(e) => setValByKey("title", e.target.value)}
-              required
-            />
-          </span>
+          <label htmlFor="title">Title:</label>
+          <InputText
+            id="title"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.title}
+            onChange={(e) => setValByKey("title", e.target.value)}
+          />
           <small className="p-error">
-            {!_.isEmpty(error["title"]) && (
-              <p className="m-0" key="error-title">
-                {error["title"]}
-              </p>
-            )}
+            {error["title"] && <p className="m-0">{error["title"]}</p>}
           </small>
         </div>
+
+        {/* Package */}
         <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="packageId">PackageId:</label>
-            <Dropdown
-              id="packageId"
-              value={_entity?.packageId?._id}
-              optionLabel="name"
-              optionValue="value"
-              options={packageIdOptions}
-              onChange={(e) => setValByKey("packageId", { _id: e.value })}
-            />
-          </span>
+          <label htmlFor="packageId">Package:</label>
+          <Dropdown
+            id="packageId"
+            value={_entity?.packageId?._id}
+            optionLabel="name"
+            optionValue="value"
+            options={packageIdOptions}
+            onChange={(e) => setValByKey("packageId", { _id: e.value })}
+          />
           <small className="p-error">
-            {!_.isEmpty(error["packageId"]) && (
-              <p className="m-0" key="error-packageId">
-                {error["packageId"]}
-              </p>
-            )}
+            {error["packageId"] && <p className="m-0">{error["packageId"]}</p>}
           </small>
         </div>
-        <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="videoUrl">VideoUrl:</label>
-            <InputText
-              id="videoUrl"
-              className="w-full mb-3 p-inputtext-sm"
-              value={_entity?.videoUrl}
-              onChange={(e) => setValByKey("videoUrl", e.target.value)}
-              required
-            />
-          </span>
-          <small className="p-error">
-            {!_.isEmpty(error["videoUrl"]) && (
-              <p className="m-0" key="error-videoUrl">
-                {error["videoUrl"]}
-              </p>
-            )}
-          </small>
-        </div>
+
+        {/* Description */}
         <div className="col-12 field">
-          <span className="align-items-center">
-            <label htmlFor="materials">Materials:</label>
-            <UploadFilesToS3
-              type={"edit"}
-              setValByKey={setValByKey}
-              onSave={onSave}
-              id={urlParams.singleMaterialsId}
-              serviceName="materials"
-            />
-          </span>
+          <label htmlFor="description">Description:</label>
+          <InputTextarea
+            id="description"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.description}
+            onChange={(e) => setValByKey("description", e.target.value)}
+          />
           <small className="p-error">
-            {!_.isEmpty(error["materials"]) && (
-              <p className="m-0" key="error-materials">
-                {error["materials"]}
-              </p>
+            {error["description"] && (
+              <p className="m-0">{error["description"]}</p>
             )}
           </small>
         </div>
-        <div className="col-12">&nbsp;</div>
-        <small className="p-error">
-          {Array.isArray(Object.keys(error))
-            ? Object.keys(error).map((e, i) => (
-                <p className="m-0" key={i}>
-                  {e}: {error[e]}
-                </p>
-              ))
-            : error}
-        </small>
+
+        {/* Video URL */}
+        <div className="col-12 md:col-6 field">
+          <label htmlFor="videoUrl">Video URL:</label>
+          <InputText
+            id="videoUrl"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.videoUrl}
+            onChange={(e) => setValByKey("videoUrl", e.target.value)}
+          />
+          <small className="p-error">
+            {error["videoUrl"] && <p className="m-0">{error["videoUrl"]}</p>}
+          </small>
+        </div>
+
+        {/* File Upload */}
+        <div className="col-12 md:col-6 field">
+          <label htmlFor="files">Upload File (PDF/PPTX):</label>
+          <input
+            type="file"
+            accept=".pdf,.pptx"
+            onChange={handleFileUpload}
+            className="mt-2"
+          />
+          {typeof _entity?.files === "string" && (
+            <a
+              href={_entity.files}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "block", marginTop: "5px", color: "#2A4454" }}
+            >
+              📎 View current file
+            </a>
+          )}
+          <small className="p-error">
+            {error["files"] && <p className="m-0">{error["files"]}</p>}
+          </small>
+        </div>
       </div>
     </Dialog>
   );
@@ -248,8 +290,9 @@ const mapState = (state) => {
   const { user } = state.auth;
   return { user };
 };
+
 const mapDispatch = (dispatch) => ({
   alert: (data) => dispatch.toast.alert(data),
 });
 
-export default connect(mapState, mapDispatch)(MaterialsCreateDialogComponent);
+export default connect(mapState, mapDispatch)(MaterialsEditDialogComponent);

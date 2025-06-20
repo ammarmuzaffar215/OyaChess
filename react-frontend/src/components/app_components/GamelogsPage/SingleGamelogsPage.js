@@ -6,8 +6,8 @@ import { Button } from "primereact/button";
 import { TabView, TabPanel } from "primereact/tabview";
 import { SplitButton } from "primereact/splitbutton";
 import client from "../../../services/restClient";
-import CommentsSection from "../../common/CommentsSection";
 import ProjectLayout from "../../Layouts/ProjectLayout";
+import PGNViewer from "../../Chess/PGNViewer";
 
 const SingleGamelogsPage = (props) => {
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ const SingleGamelogsPage = (props) => {
               <h3 className="m-0">Gamelogs</h3>
               <SplitButton
                 model={menuItems.filter(
-                  (m) => !(m.icon === "pi pi-trash" && items?.length === 0),
+                  (m) => !(m.icon === "pi pi-trash" && items?.length === 0)
                 )}
                 dropdownIcon="pi pi-ellipsis-h"
                 buttonClassName="hidden"
@@ -127,27 +127,20 @@ const SingleGamelogsPage = (props) => {
           <div className="card w-full">
             <div className="grid ">
               <div className="col-12 md:col-6 lg:col-3">
-                <label className="text-sm text-gray-600">OpponentName</label>
+                <label className="text-sm text-gray-600">White Player</label>
+                <p className="m-0 ml-3">{_entity?.whiteName}</p>
+              </div>
+              <div className="col-12 md:col-6 lg:col-3">
+                <label className="text-sm text-gray-600">Black Player</label>
                 <p className="m-0 ml-3">{_entity?.opponentName}</p>
               </div>
               <div className="col-12 md:col-6 lg:col-3">
-                <label className="text-sm text-gray-600">OpeningName</label>
+                <label className="text-sm text-gray-600">Opening Name</label>
                 <p className="m-0 ml-3">{_entity?.openingName}</p>
               </div>
               <div className="col-12 md:col-6 lg:col-3">
                 <label className="text-sm text-gray-600">Notation</label>
                 <p className="m-0 ml-3">{_entity?.notation}</p>
-              </div>
-              <div className="col-12 md:col-6 lg:col-3">
-                <label className="text-sm text-gray-600">UserId</label>
-                {userId.map((elem) => (
-                  <Link key={elem._id} to={`/users/${elem._id}`}>
-                    <div>
-                      {" "}
-                      <p className="text-xl text-primary">{elem.name}</p>
-                    </div>
-                  </Link>
-                ))}
               </div>
 
               <div className="col-12">&nbsp;</div>
@@ -158,17 +151,12 @@ const SingleGamelogsPage = (props) => {
           <TabView></TabView>
         </div>
 
-        <CommentsSection
-          recordId={urlParams.singleGamelogsId}
-          user={props.user}
-          alert={props.alert}
-          serviceName="gamelogs"
-        />
+        <PGNViewer notation={_entity?.notation} />
         <div
           id="rightsidebar"
           className={classNames(
             "overlay-auto z-1 surface-overlay shadow-2 absolute right-0 w-20rem animation-duration-150 animation-ease-in-out",
-            { hidden: !isHelpSidebarVisible },
+            { hidden: !isHelpSidebarVisible }
           )}
           style={{ top: "60px", height: "calc(100% - 60px)" }}
         >

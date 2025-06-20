@@ -17,6 +17,7 @@ import ExportIcon from "../../../assets/media/Export & Share.png";
 import CopyIcon from "../../../assets/media/Clipboard.png";
 import DuplicateIcon from "../../../assets/media/Duplicate.png";
 import DeleteIcon from "../../../assets/media/Trash.png";
+import client from "../../../services/restClient";
 
 const PackagesDataTable = ({
   items,
@@ -43,6 +44,7 @@ const PackagesDataTable = ({
   selectedDelete,
   setSelectedDelete,
   onCreateResult,
+  fetchPackages,
 }) => {
   const dt = useRef(null);
   const urlParams = useParams();
@@ -88,7 +90,7 @@ const PackagesDataTable = ({
           _selectedItems.push(rowData);
         } else {
           _selectedItems = _selectedItems.filter(
-            (item) => item._id !== rowData._id,
+            (item) => item._id !== rowData._id
           );
         }
         setSelectedItems(_selectedItems);
@@ -104,17 +106,24 @@ const PackagesDataTable = ({
     if (!selectedItems || selectedItems.length === 0) return;
 
     try {
-      const promises = selectedItems.map((item) =>
-        client.service("companies").remove(item._id),
+      await Promise.all(
+        selectedItems.map(async (item) => {
+          try {
+            await client.service("packages").remove(item._id);
+          } catch (error) {
+            if (error.name === "NotFound") {
+              console.warn(`Package ${item._id} already deleted.`);
+            } else {
+              throw error;
+            }
+          }
+        })
       );
-      await Promise.all(promises);
-      const updatedData = data.filter(
-        (item) => !selectedItems.find((selected) => selected._id === item._id),
-      );
-      setData(updatedData);
-      setSelectedDelete(selectedItems.map((item) => item._id));
 
-      deselectAllRows();
+      fetchPackages?.();
+
+      setSelectedItems([]);
+      setSelectedDelete([]);
     } catch (error) {
       console.error("Failed to delete selected records", error);
     }
@@ -226,131 +235,15 @@ const PackagesDataTable = ({
 
           {/* New buttons section */}
           <div style={{ display: "flex", alignItems: "center" }}>
-            {/* Copy button */}
-            <Button
-              label="Copy"
-              labelposition="right"
-              icon={
-                <img
-                  src={CopyIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Copy"
-              // onClick={handleCopy}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Duplicate button */}
-            <Button
-              label="Duplicate"
-              labelposition="right"
-              icon={
-                <img
-                  src={DuplicateIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Duplicate"
-              // onClick={handleDuplicate}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Export button */}
-            <Button
-              label="Export"
-              labelposition="right"
-              icon={
-                <img
-                  src={ExportIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Export"
-              // onClick={handleExport}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Message button */}
-            <Button
-              label="Message"
-              labelposition="right"
-              icon={
-                <img
-                  src={InviteIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              onClick={handleMessage}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* InboxCreateDialogComponent */}
-            <InboxCreateDialogComponent
-              show={showDialog}
-              onHide={handleHideDialog}
-              serviceInbox="companies"
-              onCreateResult={onCreateResult}
-              // selectedItemsId={selectedItems.map(item => item._id)}
-              selectedItemsId={selectedItems}
-            />
-
-            {/* <div style={{ display: 'flex', alignItems: 'center' }}> */}
             <Button
               label="Delete"
               labelposition="right"
-              icon={
-                <img
-                  src={DeleteIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
+              icon="pi pi-trash"
               onClick={handleDelete}
               style={{
                 backgroundColor: "white",
                 color: "#2A4454",
                 border: "1px solid transparent",
-                transition: "border-color 0.3s",
                 fontSize: "14px",
                 fontFamily: "Arial, sans-serif",
                 gap: "4px",

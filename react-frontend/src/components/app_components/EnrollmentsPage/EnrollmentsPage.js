@@ -362,12 +362,31 @@ const EnrollmentsPage = (props) => {
     },
   ];
 
+  const fetchEnrollments = async () => {
+  try {
+    const res = await client.service("enrollments").find({
+      query: {
+        $limit: 10000,
+        $populate: [
+          { path: "packageId", service: "packages", select: ["title"] },
+          { path: "userId", service: "users", select: ["name"] }
+        ]
+      }
+    });
+
+    setData(res.data || []);
+  } catch (error) {
+    console.error("❌ Failed to fetch enrollments", error);
+  }
+};
+
+
   return (
     <div className="mt-5">
       <div className="grid">
         <div className="col-6 flex align-items-center justify-content-start">
           <h4 className="mb-0 ml-2">
-            <span> My App / </span>
+            <span> OyaChess / </span>
             <strong>Enrollments </strong>
           </h4>
           <SplitButton
@@ -429,7 +448,6 @@ const EnrollmentsPage = (props) => {
             fields={fields}
             onRowDelete={onRowDelete}
             onEditRow={onEditRow}
-            onRowClick={onRowClick}
             searchDialog={searchDialog}
             setSearchDialog={setSearchDialog}
             showUpload={showUpload}
@@ -449,6 +467,7 @@ const EnrollmentsPage = (props) => {
             selectedDelete={selectedDelete}
             setSelectedDelete={setSelectedDelete}
             onCreateResult={onCreateResult}
+            fetchEnrollments={fetchEnrollments}
           />
         </div>
       </div>

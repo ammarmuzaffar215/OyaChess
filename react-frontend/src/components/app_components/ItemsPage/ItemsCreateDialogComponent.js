@@ -19,7 +19,7 @@ const getSchemaValidationErrorsStrings = (errorObj) => {
       }
     }
   }
-  return errMsg.length
+  return Object.keys(errMsg).length
     ? errMsg
     : errorObj.message
       ? { error: errorObj.message }
@@ -30,14 +30,26 @@ const ItemsCreateDialogComponent = (props) => {
   const [_entity, set_entity] = useState({});
   const [error, setError] = useState({});
   const [loading, setLoading] = useState(false);
+  const [isImageValid, setIsImageValid] = useState(true);
   const urlParams = useParams();
 
   useEffect(() => {
-    let init = {};
+    let init = {
+      title: "",
+      type: "",
+      qty: 0,
+      price: 0,
+      discount: 0,
+      imageUrl: "",
+      description: "",
+      productLink: "",
+    };
+
     if (!_.isEmpty(props?.entity)) {
-      init = initilization({ ...props?.entity, ...init }, [], setError);
+      init = initilization({ ...init, ...props?.entity }, [], setError);
     }
-    set_entity({ ...init });
+
+    set_entity(init);
     setError({});
   }, [props.show]);
 
@@ -46,29 +58,123 @@ const ItemsCreateDialogComponent = (props) => {
     const error = {};
 
     if (_.isEmpty(_entity?.title)) {
-      error["title"] = `Title field is required`;
+      error["Title"] = `Title field is required`;
       ret = false;
     }
 
     if (_.isEmpty(_entity?.type)) {
-      error["type"] = `Type field is required`;
+      error["Type"] = `Type field is required`;
       ret = false;
     }
-    if (!ret) setError(error);
+
+    if (_.isEmpty(_entity?.description)) {
+      error["Description"] = "Description field is required";
+      ret = false;
+    }
+
+    if (!_.isEmpty(_entity?.productLink)) {
+      const isValidUrl = /^(https?:\/\/)[^\s/$.?#].[^\s]*$/i.test(
+        _entity.productLink
+      );
+      if (!isValidUrl) {
+        error["Product Link"] =
+          "Product Link must be a valid URL (starting with http:// or https://)";
+        ret = false;
+      }
+    }
+
+    if (
+      _entity?.discount !== undefined &&
+      _entity?.price !== undefined &&
+      _entity.discount > _entity.price
+    ) {
+      error["Discount"] = "Discount cannot be greater than price";
+      ret = false;
+    }
+
+    if (_.isEmpty(_entity?.imageUrl)) {
+      error["Images"] = "Image is required.";
+      ret = false;
+    }
+
+    setError(error);
     return ret;
   };
 
+  const handleImageUpload = async (file) => {
+    if (!file) return;
+
+    const isValid = ["image/png", "image/jpeg"].includes(file.type);
+    setIsImageValid(isValid);
+
+    if (!isValid) {
+      props.alert({
+        type: "error",
+        title: "Invalid File",
+        message: "Only PNG or JPG files are allowed.",
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "oyachess_unsigned");
+    formData.append("folder", "oyachess/items");
+
+    try {
+      const res = await fetch(
+        "https://api.cloudinary.com/v1_1/dwfqzyxsy/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const data = await res.json();
+      if (data?.secure_url) {
+        set_entity((prev) => ({ ...prev, imageUrl: data.secure_url }));
+      } else {
+        props.alert({
+          type: "error",
+          title: "Upload Failed",
+          message: "Upload succeeded but no image URL returned.",
+        });
+      }
+    } catch (err) {
+      console.error("Upload failed:", err);
+      props.alert({
+        type: "error",
+        title: "Upload Failed",
+        message: "Image upload failed. Please try again.",
+      });
+    }
+  };
+
   const onSave = async () => {
-    if (!validate()) return;
-    let _data = {
+    if (!validate() || !isImageValid) {
+      if (!isImageValid) {
+        props.alert({
+          type: "error",
+          title: "Image Error",
+          message: "Please upload a valid PNG or JPG image before saving.",
+        });
+      }
+      return;
+    }
+
+    const _data = {
       title: _entity?.title,
       type: _entity?.type,
-      qty: _entity?.qty,
-      price: _entity?.price,
-      discount: _entity?.discount,
+      description: _entity.description,
+      qty: _entity?.qty ?? 0,
+      price: _entity?.price ?? 0,
+      discount: _entity?.discount ?? 0,
+      imageUrl: _entity.imageUrl,
+      productLink: _entity.productLink,
       createdBy: props.user._id,
       updatedBy: props.user._id,
     };
+
+    console.log("\ud83d\udce4 Submitting to items.create:", _data);
 
     setLoading(true);
 
@@ -82,7 +188,7 @@ const ItemsCreateDialogComponent = (props) => {
       });
       props.onCreateResult(result);
     } catch (error) {
-      console.log("error", error);
+      console.log("\u274c create() error:", error);
       setError(getSchemaValidationErrorsStrings(error) || "Failed to create");
       props.alert({
         type: "error",
@@ -90,19 +196,20 @@ const ItemsCreateDialogComponent = (props) => {
         message: "Failed to create in Items",
       });
     }
+
     setLoading(false);
   };
 
   const renderFooter = () => (
     <div className="flex justify-content-end">
       <Button
-        label="save"
+        label="Save"
         className="p-button-text no-focus-effect"
         onClick={onSave}
         loading={loading}
       />
       <Button
-        label="close"
+        label="Close"
         className="p-button-text no-focus-effect p-button-secondary"
         onClick={props.onHide}
       />
@@ -133,111 +240,120 @@ const ItemsCreateDialogComponent = (props) => {
         role="items-create-dialog-component"
       >
         <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="title">Title:</label>
-            <InputText
-              id="title"
-              className="w-full mb-3 p-inputtext-sm"
-              value={_entity?.title}
-              onChange={(e) => setValByKey("title", e.target.value)}
-              required
-            />
-          </span>
+          <label htmlFor="title">Title:</label>
+          <InputText
+            id="title"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.title}
+            onChange={(e) => setValByKey("title", e.target.value)}
+            required
+          />
           <small className="p-error">
-            {!_.isEmpty(error["title"]) ? (
-              <p className="m-0" key="error-title">
-                {error["title"]}
-              </p>
-            ) : null}
+            {error["Title"] && <p className="m-0">{error["Title"]}</p>}
           </small>
         </div>
+
         <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="type">Type:</label>
-            <InputText
-              id="type"
-              className="w-full mb-3 p-inputtext-sm"
-              value={_entity?.type}
-              onChange={(e) => setValByKey("type", e.target.value)}
-              required
-            />
-          </span>
+          <label htmlFor="type">Type:</label>
+          <InputText
+            id="type"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.type}
+            onChange={(e) => setValByKey("type", e.target.value)}
+            required
+          />
           <small className="p-error">
-            {!_.isEmpty(error["type"]) ? (
-              <p className="m-0" key="error-type">
-                {error["type"]}
-              </p>
-            ) : null}
+            {error["Type"] && <p className="m-0">{error["Type"]}</p>}
           </small>
         </div>
+
+        <div className="col-12 field">
+          <label htmlFor="description">Description:</label>
+          <InputText
+            id="description"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.description}
+            onChange={(e) => setValByKey("description", e.target.value)}
+          />
+          <small className="p-error">
+            {error["Description"] && (
+              <p className="m-0">{error["Description"]}</p>
+            )}
+          </small>
+        </div>
+
+        <div className="col-12 field">
+          <label htmlFor="productLink">Product Link (optional):</label>
+          <InputText
+            id="productLink"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.productLink}
+            onChange={(e) => setValByKey("productLink", e.target.value)}
+            placeholder="https://example.com/item"
+          />
+          <small className="p-error">
+            {error["Link"] && (
+              <p className="m-0">{error["Product Link"]}</p>
+            )}
+          </small>
+        </div>
+
         <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="qty">Qty:</label>
-            <InputNumber
-              id="qty"
-              className="w-full mb-3 p-inputtext-sm"
-              value={_entity?.qty}
-              onChange={(e) => setValByKey("qty", e.value)}
-            />
-          </span>
-          <small className="p-error">
-            {!_.isEmpty(error["qty"]) ? (
-              <p className="m-0" key="error-qty">
-                {error["qty"]}
-              </p>
-            ) : null}
-          </small>
+          <label htmlFor="qty">Qty:</label>
+          <InputNumber
+            id="qty"
+            className="w-full mb-3 p-inputtext-sm"
+            value={_entity?.qty}
+            onValueChange={(e) => setValByKey("qty", e.value)}
+          />
         </div>
+
         <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="price">Price:</label>
-            <InputNumber
-              id="price"
-              className="w-full mb-3"
-              mode="currency"
-              currency="MYR"
-              locale="en-US"
-              value={_entity?.price}
-              onValueChange={(e) => setValByKey("price", e.value)}
-            />
-          </span>
-          <small className="p-error">
-            {!_.isEmpty(error["price"]) ? (
-              <p className="m-0" key="error-price">
-                {error["price"]}
-              </p>
-            ) : null}
-          </small>
+          <label htmlFor="price">Price:</label>
+          <InputNumber
+            id="price"
+            className="w-full mb-3"
+            mode="currency"
+            currency="MYR"
+            locale="en-US"
+            value={_entity?.price}
+            onValueChange={(e) => setValByKey("price", e.value)}
+          />
         </div>
+
         <div className="col-12 md:col-6 field">
-          <span className="align-items-center">
-            <label htmlFor="discount">Discount:</label>
-            <InputNumber
-              id="discount"
-              className="w-full mb-3"
-              mode="currency"
-              currency="MYR"
-              locale="en-US"
-              value={_entity?.discount}
-              onValueChange={(e) => setValByKey("discount", e.value)}
-            />
-          </span>
+          <label htmlFor="discount">Discount:</label>
+          <InputNumber
+            id="discount"
+            className="w-full mb-3"
+            mode="currency"
+            currency="MYR"
+            locale="en-US"
+            value={_entity?.discount}
+            onValueChange={(e) => setValByKey("discount", e.value)}
+          />
+        </div>
+
+        <div className="col-12 md:col-6 field">
+          <label htmlFor="image">Image (PNG or JPG):</label>
+          <input
+            type="file"
+            accept="image/png, image/jpeg"
+            onChange={(e) => handleImageUpload(e.target.files[0])}
+            className="w-full mb-1"
+          />
           <small className="p-error">
-            {!_.isEmpty(error["discount"]) ? (
-              <p className="m-0" key="error-discount">
-                {error["discount"]}
-              </p>
-            ) : null}
+            {error["Images"] && <p className="m-0">{error["Images"]}</p>}
           </small>
         </div>
+
         <small className="p-error">
-          {Array.isArray(Object.keys(error))
-            ? Object.keys(error).map((e, i) => (
-                <p className="m-0" key={i}>
-                  {e}: {error[e]}
-                </p>
-              ))
-            : error}
+          {Object.keys(error).length > 0 &&
+            Object.entries(error).map(([key, msg], i) => (
+              <p className="m-0" key={i}>
+                {key}: {msg}
+              </p>
+            ))}
         </small>
       </div>
     </Dialog>
@@ -248,6 +364,7 @@ const mapState = (state) => {
   const { user } = state.auth;
   return { user };
 };
+
 const mapDispatch = (dispatch) => ({
   alert: (data) => dispatch.toast.alert(data),
 });

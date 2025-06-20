@@ -3,20 +3,11 @@ import { DataTable } from "primereact/datatable";
 import React, { useState, useRef, useEffect } from "react";
 import _ from "lodash";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
 import { useParams } from "react-router-dom";
-import moment from "moment";
 import UploadService from "../../../services/UploadService";
-import { InputText } from "primereact/inputtext";
 import { Dialog } from "primereact/dialog";
 import { MultiSelect } from "primereact/multiselect";
-import DownloadCSV from "../../../utils/DownloadCSV";
-import InboxCreateDialogComponent from "../../cb_components/InboxPage/InboxCreateDialogComponent";
-import InviteIcon from "../../../assets/media/Invite.png";
-import ExportIcon from "../../../assets/media/Export & Share.png";
-import CopyIcon from "../../../assets/media/Clipboard.png";
-import DuplicateIcon from "../../../assets/media/Duplicate.png";
-import DeleteIcon from "../../../assets/media/Trash.png";
+import client from "../../../services/restClient";
 
 const EnrollmentsDataTable = ({
   items,
@@ -43,6 +34,7 @@ const EnrollmentsDataTable = ({
   selectedDelete,
   setSelectedDelete,
   onCreateResult,
+  fetchEnrollments,
 }) => {
   const dt = useRef(null);
   const urlParams = useParams();
@@ -86,7 +78,7 @@ const EnrollmentsDataTable = ({
           _selectedItems.push(rowData);
         } else {
           _selectedItems = _selectedItems.filter(
-            (item) => item._id !== rowData._id,
+            (item) => item._id !== rowData._id
           );
         }
         setSelectedItems(_selectedItems);
@@ -100,19 +92,23 @@ const EnrollmentsDataTable = ({
 
   const handleDelete = async () => {
     if (!selectedItems || selectedItems.length === 0) return;
-
     try {
-      const promises = selectedItems.map((item) =>
-        client.service("companies").remove(item._id),
+      await Promise.all(
+        selectedItems.map(async (item) => {
+          try {
+            await client.service("enrollments").remove(item._id);
+          } catch (error) {
+            if (error.name === "NotFound") {
+              console.warn(`Enrollments ${item._id} already deleted.`);
+            } else {
+              throw error;
+            }
+          }
+        })
       );
-      await Promise.all(promises);
-      const updatedData = data.filter(
-        (item) => !selectedItems.find((selected) => selected._id === item._id),
-      );
-      setData(updatedData);
-      setSelectedDelete(selectedItems.map((item) => item._id));
-
-      deselectAllRows();
+      fetchEnrollments?.();
+      setSelectedItems([]);
+      setSelectedDelete([]);
     } catch (error) {
       console.error("Failed to delete selected records", error);
     }
@@ -155,7 +151,7 @@ const EnrollmentsDataTable = ({
         />
         <Column
           field="packageId"
-          header="PackageId"
+          header="Package"
           body={dropdownTemplate0}
           filter={selectedFilterFields.includes("packageId")}
           hidden={selectedHideFields?.includes("packageId")}
@@ -163,7 +159,7 @@ const EnrollmentsDataTable = ({
         />
         <Column
           field="userId"
-          header="UserId"
+          header="Username"
           body={dropdownTemplate1}
           filter={selectedFilterFields.includes("userId")}
           hidden={selectedHideFields?.includes("userId")}
@@ -171,7 +167,7 @@ const EnrollmentsDataTable = ({
         />
         <Column
           field="progress"
-          header="Progress"
+          header="Remarks"
           body={pTemplate2}
           filter={selectedFilterFields.includes("progress")}
           hidden={selectedHideFields?.includes("progress")}
@@ -180,7 +176,7 @@ const EnrollmentsDataTable = ({
         />
         <Column
           field="schedule"
-          header="Schedule"
+          header="Class Schedule"
           body={calendar_multipleTemplate3}
           filter={selectedFilterFields.includes("schedule")}
           hidden={selectedHideFields?.includes("schedule")}
@@ -231,131 +227,15 @@ const EnrollmentsDataTable = ({
 
           {/* New buttons section */}
           <div style={{ display: "flex", alignItems: "center" }}>
-            {/* Copy button */}
-            <Button
-              label="Copy"
-              labelposition="right"
-              icon={
-                <img
-                  src={CopyIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Copy"
-              // onClick={handleCopy}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Duplicate button */}
-            <Button
-              label="Duplicate"
-              labelposition="right"
-              icon={
-                <img
-                  src={DuplicateIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Duplicate"
-              // onClick={handleDuplicate}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Export button */}
-            <Button
-              label="Export"
-              labelposition="right"
-              icon={
-                <img
-                  src={ExportIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              // tooltip="Export"
-              // onClick={handleExport}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* Message button */}
-            <Button
-              label="Message"
-              labelposition="right"
-              icon={
-                <img
-                  src={InviteIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
-              onClick={handleMessage}
-              className="p-button-rounded p-button-text"
-              style={{
-                backgroundColor: "white",
-                color: "#2A4454",
-                border: "1px solid transparent",
-                transition: "border-color 0.3s",
-                fontSize: "14px",
-                fontFamily: "Arial, sans-serif",
-                marginRight: "8px",
-                gap: "4px",
-              }}
-            />
-
-            {/* InboxCreateDialogComponent */}
-            <InboxCreateDialogComponent
-              show={showDialog}
-              onHide={handleHideDialog}
-              serviceInbox="companies"
-              onCreateResult={onCreateResult}
-              // selectedItemsId={selectedItems.map(item => item._id)}
-              selectedItemsId={selectedItems}
-            />
-
-            {/* <div style={{ display: 'flex', alignItems: 'center' }}> */}
             <Button
               label="Delete"
               labelposition="right"
-              icon={
-                <img
-                  src={DeleteIcon}
-                  style={{ marginRight: "4px", width: "1em", height: "1em" }}
-                />
-              }
+              icon="pi pi-trash"
               onClick={handleDelete}
               style={{
                 backgroundColor: "white",
                 color: "#2A4454",
                 border: "1px solid transparent",
-                transition: "border-color 0.3s",
                 fontSize: "14px",
                 fontFamily: "Arial, sans-serif",
                 gap: "4px",

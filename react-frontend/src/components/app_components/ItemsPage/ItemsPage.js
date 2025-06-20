@@ -180,8 +180,8 @@ const ItemsPage = (props) => {
           setLoading(false);
           props.hide();
           console.log({ error });
-        }),
-      ),
+        })
+      )
     );
     props.hide();
     setLoading(false);
@@ -348,17 +348,35 @@ const ItemsPage = (props) => {
     },
   ];
 
+  const fetchItems = async () => {
+    try {
+      const res = await client.service("items").find({
+        query: {
+          $limit: 10000,
+          $populate: [
+            { path: "createdBy", service: "users", select: ["name"] },
+            { path: "updatedBy", service: "users", select: ["name"] },
+          ],
+        },
+      });
+
+      setData(res.data || []);
+    } catch (error) {
+      console.error("❌ Failed to fetch items", error);
+    }
+  };
+
   return (
     <div className="mt-5">
       <div className="grid">
         <div className="col-6 flex align-items-center justify-content-start">
           <h4 className="mb-0 ml-2">
-            <span> My App / </span>
+            <span> OyaChess / </span>
             <strong>Items </strong>
           </h4>
           <SplitButton
             model={menuItems.filter(
-              (m) => !(m.icon === "pi pi-trash" && items?.length === 0),
+              (m) => !(m.icon === "pi pi-trash" && items?.length === 0)
             )}
             dropdownIcon="pi pi-ellipsis-h"
             buttonClassName="hidden"
@@ -370,7 +388,7 @@ const ItemsPage = (props) => {
             {" "}
             <SplitButton
               model={filterMenuItems.filter(
-                (m) => !(m.icon === "pi pi-trash" && data?.length === 0),
+                (m) => !(m.icon === "pi pi-trash" && data?.length === 0)
               )}
               dropdownIcon={
                 <img
@@ -384,7 +402,7 @@ const ItemsPage = (props) => {
             ></SplitButton>
             <SplitButton
               model={sortMenuItems.filter(
-                (m) => !(m.icon === "pi pi-trash" && data?.length === 0),
+                (m) => !(m.icon === "pi pi-trash" && data?.length === 0)
               )}
               dropdownIcon={
                 <img
@@ -415,7 +433,7 @@ const ItemsPage = (props) => {
             fields={fields}
             onRowDelete={onRowDelete}
             onEditRow={onEditRow}
-            onRowClick={onRowClick}
+            // onRowClick={onRowClick}
             searchDialog={searchDialog}
             setSearchDialog={setSearchDialog}
             showUpload={showUpload}
@@ -435,6 +453,7 @@ const ItemsPage = (props) => {
             selectedDelete={selectedDelete}
             setSelectedDelete={setSelectedDelete}
             onCreateResult={onCreateResult}
+            fetchItems={fetchItems}
           />
         </div>
       </div>
@@ -484,7 +503,7 @@ const ItemsPage = (props) => {
         id="rightsidebar"
         className={classNames(
           "overlay-auto z-1 surface-overlay shadow-2 absolute right-0 w-20rem animation-duration-150 animation-ease-in-out",
-          { hidden: !isHelpSidebarVisible, block: isHelpSidebarVisible },
+          { hidden: !isHelpSidebarVisible, block: isHelpSidebarVisible }
         )}
         style={{ top: "60px", height: "calc(100% - 60px)" }}
       >
